@@ -72,7 +72,6 @@ export function changeSettings(toggleClicked: any) {
  */
 export function changeToggle() {
   const checkPreferences = getCookie('JgcPreferences');
-  // @ts-expect-error TS(2550): Property 'entries' does not exist on type 'ObjectC... Remove this comment to see the full error message
   for (const [k, v] of Object.entries(checkPreferences['preferences'])) if (v == true) animateToggle(true, `${k}`);
 }
 
@@ -107,7 +106,6 @@ export function closePreferencePanel() {
 export function closePreferencePanelAndSaveAll() {
   const checkPreferencesFromStorage = JSON.parse(localStorage.getItem('JgcPreferences'));
   const preferences = {};
-  // @ts-expect-error TS(2550): Property 'entries' does not exist on type 'ObjectC... Remove this comment to see the full error message
   for (const [k, v] of Object.entries(checkPreferencesFromStorage)) preferences[k] = true;
   localStorage.setItem('JgcPreferences', JSON.stringify(preferences));
   if (document.getElementById('preferenceDiv')) closePreferencePanel();
@@ -119,11 +117,10 @@ export function closePreferencePanelAndSaveAll() {
 export function generateOptions() {
   let arr: any = [],
     cookieExists = getCookie('JgcPreferences');
-  // @ts-expect-error TS(2550): Property 'entries' does not exist on type 'ObjectC... Remove this comment to see the full error message
   for (const [k, v] of Object.entries(JGC.getCustomCookies)) {
     if (cookieExists['enable'].length > 0 && cookieExists['enable'].includes(k)) {
       arr += `
-        <div class="${checkTailwindPrefix('flex items-center space-x-6 py-1 px-4')} ${JGC.customStyle?.stripes ? `${JGC.customStyle.stripes}` : ''} "> 
+        <div class="${checkTailwindPrefix('flex items-center space-x-6 py-1 px-4')} ${JGC.customStyle?.stripes ? `${JGC.customStyle.stripes}` : ''} ">
           <div>
             <div class="${checkTailwindPrefix('flex items-center justify-center')}">
             <div id="toggle-${k}-div" class="${checkTailwindPrefix('relative w-12 h-7 transition duration-200 ease-linear rounded-full bg-gray-800 dark:bg-gray-700')}">
@@ -154,7 +151,7 @@ export function generateOptions() {
         </div>
       <div class="${JGC.customStyle?.servicesTag ? JGC.customStyle.services : `${checkTailwindPrefix('dark:text-gray-300')}`} ${checkTailwindPrefix('w-full')}">
           <div class="${checkTailwindPrefix('flex items-center space-x-2')}">
-            <h4 class="${checkTailwindPrefix('font-bold text-md')}">${v.title}</h4> 
+            <h4 class="${checkTailwindPrefix('font-bold text-md')}">${v.title}</h4>
           </div>
           <div class="${JGC.customStyle?.panelText ? JGC.customStyle.panelText : `${checkTailwindPrefix('dark:text-gray-300')}`} ${checkTailwindPrefix('text-xs md:text-md')}">${
         v.description
@@ -195,8 +192,8 @@ export function loadPreferences() {
  * Return an array of services
  */
 function makeArrForServices(value: any) {
-  return `<div class="${JGC.customStyle?.toggles ? JGC.customStyle.toggles : checkTailwindPrefix('bg-green-200')} 
-  ${JGC.customStyle?.servicesTag ? JGC.customStyle.servicesTag : checkTailwindPrefix('text-green-800')} 
+  return `<div class="${JGC.customStyle?.toggles ? JGC.customStyle.toggles : checkTailwindPrefix('bg-green-200')}
+  ${JGC.customStyle?.servicesTag ? JGC.customStyle.servicesTag : checkTailwindPrefix('text-green-800')}
   ${checkTailwindPrefix('px-2 py-0.5 rounded')}">${value}</div>`;
 }
 
@@ -221,7 +218,7 @@ export function managePreferences() {
           } ${JGC.panel?.padding == false ? '' : `${checkTailwindPrefix('p-2')}`}">
             <div class="${JGC.customStyle?.panelHeader ? JGC.customStyle.panelHeader : `${checkTailwindPrefix('md:flex justify-between px-4 py-4')}`}">
               <h2 class="${JGC.customStyle?.panelTitle ? JGC.customStyle.panelTitle : checkTailwindPrefix('dark:text-gray-300 leading-snug text-xl font-bold m-0 p-0')}">
-                ${JGC.text?.panelTitle ? JGC.text.panelTitle : ''} 
+                ${JGC.text?.panelTitle ? JGC.text.panelTitle : ''}
               </h2>
               <div class="${checkTailwindPrefix('md:space-x-2 md:mt-0 mt-4 flex space-y-2 md:space-y-0 flex-col md:flex-row')}">
                 <button role="button" id="closePreferencePanel" type="button" class="${
@@ -231,7 +228,7 @@ export function managePreferences() {
                         'px-3 py-1 uppercase font-bold tracking-wide text-xs z-index-10 relative rounded-md  focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer text-green-600 ring-1 ring-green-600',
                       )}`
                 } ">
-                  ${JGC.text?.saveButton ? JGC.text.saveButton : JGC.locale.saveAndContinue}  
+                  ${JGC.text?.saveButton ? JGC.text.saveButton : JGC.locale.saveAndContinue}
                 </button>
                 <button role="button" id="closePreferencePanelAcceptAll" type="button" class="${
                   JGC.customStyle?.saveAllButton
@@ -240,16 +237,16 @@ export function managePreferences() {
                         'px-3 py-1 uppercase font-bold tracking-wide text-xs z-index-10 relative rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer text-green-600 ring-1 ring-green-600',
                       )}`
                 }  ">
-                  ${JGC.text?.saveAllButton ? JGC.text.saveAllButton : JGC.locale.saveAndContinueAcceptAll}  
+                  ${JGC.text?.saveAllButton ? JGC.text.saveAllButton : JGC.locale.saveAndContinueAcceptAll}
                 </button>
               </div>
             </div>
             <div>
               <div style="overflow-y: scroll; -webkit-overflow-scrolling: touch; max-height: calc(100vh - 400px);" class="${
                 JGC.panel && JGC.panel.stripes ? `${JGC.panel.stripes.odd} ${JGC.panel.stripes.even}` : checkTailwindPrefix('space-y-4 overflow-y-auto')
-              } ${checkTailwindPrefix('text-sm py-4')}"> 
+              } ${checkTailwindPrefix('text-sm py-4')}">
                 ${generateOptions()}
-              </div> 
+              </div>
             </div>
           </div>
           ${JGC.panelFooter ? `<div id="jgc-custom-footer" class="${checkTailwindPrefix('w-full')}"></div>` : ''}
@@ -285,7 +282,7 @@ export function managePreferencesLink(colors: any) {
   <button id="openPanel" style=${JGC.customStyle?.preferencesText ? '' : 'font-size:0.6rem'} ;" class="${
     colors ? colors : `${JGC.customStyle?.preferencesText ? JGC.customStyle.preferencesText : checkTailwindPrefix('font-bold uppercase dark:text-white')}`
   }">
-    ${JGC.text.preferencesText ?? 'Manage and choose cookies'} 
+    ${JGC.text.preferencesText ?? 'Manage and choose cookies'}
   </button>`);
 }
 
@@ -341,7 +338,6 @@ function returnServices(service: any) {
   }
 
   if (JGC.auto) {
-    // @ts-expect-error TS(2550): Property 'values' does not exist on type 'ObjectCo... Remove this comment to see the full error message
     const objKeys = Object.values(JGC.autoCategories);
     objKeys.forEach((el: any, k: any) => {
       if (service == el[1]) arr += makeArrForServices(el[0]);
@@ -349,7 +345,6 @@ function returnServices(service: any) {
   }
 
   if (JGC.activate) {
-    // @ts-expect-error TS(2550): Property 'entries' does not exist on type 'ObjectC... Remove this comment to see the full error message
     const objEntries = Object.entries(JGC.activate);
     for (let i = 0; i < objEntries.length; i++) {
       const element = objEntries[i];
@@ -359,7 +354,7 @@ function returnServices(service: any) {
     }
   }
 
-  divsToReturn += `<div class="${arr.length > 0 ? checkTailwindPrefix('mt-2 border-t') : ''}"> 
+  divsToReturn += `<div class="${arr.length > 0 ? checkTailwindPrefix('mt-2 border-t') : ''}">
     ${arr.length > 0 ? `<h4 class="${checkTailwindPrefix('text-xs mt-1')} ${JGC.customStyle?.servicesText ?? ''}">${JGC.text.servicesTag}</h4>` : ''}
     <div class="${checkTailwindPrefix('flex space-x-1 mt-2 text-xs font-semibold')}">${arr}</div>
     </div>`;
@@ -371,8 +366,9 @@ function returnServices(service: any) {
  */
 export function setPreferences() {
   const preferences = {};
-  // @ts-expect-error TS(2550): Property 'entries' does not exist on type 'ObjectC... Remove this comment to see the full error message
-  for (const [k, v] of Object.entries(JGC.getCustomCookies)) preferences[k] = true;
+  for (const [k, v] of Object.entries(JGC.getCustomCookies)) {
+    preferences[k] = true;
+  }
   const getPreferences = getCookie('JgcPreferences');
   const saveObj = { ...getPreferences, preferences };
   saveCookie(saveObj);

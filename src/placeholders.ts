@@ -60,7 +60,7 @@ export function generateIframeDivs(element: any) {
 /**
  * Remove hidden divs
  */
-export function removeHiddenDivs(src: any) {
+export function removeHiddenDivs(src: string):void  {
   const getDivsToRemove = document.querySelectorAll('[data-jgc-placeholder-tag]');
   if (getDivsToRemove.length > 0) {
     for (let i = 0; i < getDivsToRemove.length; i++) {
@@ -73,7 +73,7 @@ export function removeHiddenDivs(src: any) {
 /**
  * Remove placeholders
  */
-export function removePlaceholders() {
+export function removePlaceholders() :void{
   const getElementsPlaceholder = document.querySelectorAll('[data-jgc-placeholder]');
   if (getElementsPlaceholder.length > 0) {
     for (let i = 0; i < getElementsPlaceholder.length; i++) {
@@ -85,8 +85,7 @@ export function removePlaceholders() {
         for (let i = 0; i < getOriginalIframe.length; i++) {
           const el = getOriginalIframe[i];
           if (getPlaceholder.length > 0) {
-            // @ts-expect-error TS(2345): Argument of type 'string[]' is not assignable to p... Remove this comment to see the full error message
-            const height = getPlaceholder[0].getAttribute(['data-jgc-placeholder-height']);
+            const height = getPlaceholder[0].getAttribute('data-jgc-placeholder-height');
             el.setAttribute('height', `${height}px`);
           }
         }
@@ -100,14 +99,8 @@ export function removePlaceholders() {
           el.remove();
         }
       }
-      // @ts-expect-error TS(7022): 'getSrc' implicitly has type 'any' because it does... Remove this comment to see the full error message
-      const getSrc =
-        getSrcToRemove[0]?.getAttribute('data-jgc-src') ||
-        // @ts-expect-error TS(2349): This expression is not callable.
-        element
-          .getAttribute('data-jgc-placeholder-id')(JGC as any)
-          // @ts-expect-error TS(2448): Block-scoped variable 'getSrc' used before its dec... Remove this comment to see the full error message
-          .removeHiddenDivs(getSrc);
+      const getSrc = getSrcToRemove[0]?.getAttribute('data-jgc-src') || element.getAttribute('data-jgc-placeholder-id');
+      removeHiddenDivs(getSrc);
     }
   } else {
     document.body.querySelectorAll('[data-jgc-tag]').forEach(el => el.classList.remove(checkTailwindPrefix('h-0'), checkTailwindPrefix('w-0')));

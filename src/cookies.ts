@@ -9,30 +9,38 @@
 import JGC from './justgoodcookies';
 import { showBanner } from './banner';
 
+interface Cookie {
+  remove: boolean;
+  darkBackground: boolean;
+  duration: { expiry: string; value: string };
+  preferences: any;
+  id?: string;
+}
+
+type CookieType = 'JgcPreferences';
+
 /*
  * Check the expiration date of the cookie
  */
-export function checkCookieExpiration(val: any) {
-  const checkPreference = getCookie('JgcPreferences');
+export function checkCookieExpiration(val: string): void {
+  const name: CookieType = 'JgcPreferences';
+  const checkPreference = getCookie(name);
   const cookieDuration = JGC.cookieTimeout * 24 * 60 * 60 * 1000;
-  let saveObj = {};
   const date = new Date();
   date.setTime(date.getTime() + cookieDuration);
-  const item = { value: val, expiry: date.toString() };
-  if (!checkPreference['duration']) {
-    const getPreferences = getCookie('JgcPreferences');
+  if (!checkPreference.duration) {
+    const getPreferences = getCookie(name);
     const uniqueId = Date.now() + Math.random().toString(16).slice(2);
-    saveObj = { ...getPreferences, duration: item, id: uniqueId };
-    saveCookie(saveObj);
+    const duration = { value: val, expiry: date.toString() };
+    saveCookie({ ...getPreferences, duration, id: uniqueId });
   } else {
     const now = new Date();
-    const storedData = new Date(checkPreference['duration']['expiry']);
+    const storedData = new Date(checkPreference.duration.expiry);
     if (now.setHours(0, 0, 0, 0) >= storedData.setHours(0, 0, 0, 0)) {
-      const getPreferences = getCookie('JgcPreferences');
+      const getPreferences = getCookie(name);
       delete getPreferences.duration;
-      const item = { value: '1', expiry: date.toString() };
-      saveObj = { ...getPreferences, duration: item };
-      saveCookie(saveObj);
+      const duration = { value: '1', expiry: date.toString() };
+      saveCookie({ ...getPreferences, duration });
       showBanner();
     }
   }
@@ -41,16 +49,13 @@ export function checkCookieExpiration(val: any) {
 /**
  * Get cookie
  */
-export function getCookie(name: any) {
+export function getCookie(name: CookieType): Cookie {
   const cookie = {};
   document.cookie.split(';').forEach(function (el) {
     const [k, v] = el.split('=');
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     cookie[k.trim()] = v;
   });
-  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
   if (cookie[name]) {
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     return JSON.parse(cookie[name]);
   } else {
     return null;
@@ -60,18 +65,15 @@ export function getCookie(name: any) {
 /**
  * Get cookie preferences (useful for the callbacks from the frontend)
  */
-export function getCookieId(name: any) {
+export function getCookieId(name: CookieType): void {
   const cookie = {};
   document.cookie.split(';').forEach(function (el) {
     const [k, v] = el.split('=');
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     cookie[k.trim()] = v;
   });
-  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
   if (cookie[name]) {
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     const cookieName = JSON.parse(cookie[name]);
-    return cookieName['id'];
+    return cookieName.id;
   } else {
     return null;
   }
@@ -80,18 +82,15 @@ export function getCookieId(name: any) {
 /**
  * Get cookie (useful for a callback from the frontend)
  */
-export function getCookiePreferences(name: any) {
+export function getCookiePreferences(name: CookieType): void {
   const cookie = {};
   document.cookie.split(';').forEach(function (el) {
     const [k, v] = el.split('=');
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
     cookie[k.trim()] = v;
   });
-  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
   if (cookie[name]) {
-    // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-    const cookieName = JSON.parse(cookie[name]);
-    return cookieName['preferences'];
+    const cookie = JSON.parse(cookie[name]);
+    return cookie.preferences;
   } else {
     return null;
   }
@@ -100,19 +99,19 @@ export function getCookiePreferences(name: any) {
 /**
  * Refresh the local storage
  */
-export function refreshLocalStorage() {
+export function refreshLocalStorage(): void {
   const checkPreferences = getCookie('JgcPreferences');
-  const saveObj = { ...checkPreferences['preferences'] };
+  const saveObj = { ...checkPreferences.preferences };
   localStorage.setItem('JgcPreferences', JSON.stringify(saveObj));
 }
 
 /**
  * Save cookie
  */
-export function saveCookie(saveObj: any) {
+export function saveCookie(saveObj: Cookie): void {
   const checkPreferences = getCookie('JgcPreferences');
-  if (checkPreferences && checkPreferences['duration']) {
-    const expiration = checkPreferences['duration'].expiry;
+  if (checkPreferences && checkPreferences.duration) {
+    const expiration = checkPreferences.duration.expiry;
     document.cookie = `JgcPreferences=${JSON.stringify(saveObj)};expires= ${expiration};path=/;SameSite=Strict`;
   } else {
     document.cookie = `JgcPreferences=${JSON.stringify(saveObj)};path=/;SameSite=Strict;`;
@@ -122,11 +121,9 @@ export function saveCookie(saveObj: any) {
 /**
  * Save cookie categories
  */
-export function saveCookiesPreferences() {
+export function saveCookiesPreferences(): void {
   const arr = [];
-  // @ts-expect-error TS(2550): Property 'entries' does not exist on type 'ObjectC... Remove this comment to see the full error message
   if (JGC.activate) for (const [key, value] of Object.entries(JGC.activate)) arr.push(value.dataJgcTag);
-  // @ts-expect-error TS(2550): Property 'entries' does not exist on type 'ObjectC... Remove this comment to see the full error message
   for (const [k, v] of Object.entries(JGC.getCustomCookies)) arr.push(k);
   const preferences = getCookie('JgcPreferences');
   const saveObj = { ...preferences, enable: arr };

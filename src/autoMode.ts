@@ -14,11 +14,10 @@ import { generateIframeDivs } from './placeholders';
 /**
  * Enable Auto Mode
  */
-export function autoMode(arrToActivate: any) {
+export function autoMode(arrToActivate?: any): void {
   const objKeys = Object.keys(JGC.autoCategories);
   const arrService = [];
   if (arrToActivate) {
-    // @ts-expect-error TS(2550): Property 'entries' does not exist on type 'ObjectC... Remove this comment to see the full error message
     for (const [k, v] of Object.entries(JGC.autoCategories)) {
       if (!arrToActivate.includes(v[1])) {
         const scripts = document.querySelectorAll('iframe,script,link');
@@ -60,7 +59,6 @@ export function autoMode(arrToActivate: any) {
                 }
               })
             ) {
-              // @ts-expect-error TS(2550): Property 'values' does not exist on type 'ObjectCo... Remove this comment to see the full error message
               const checkIfNecessary = Object.values(JGC.autoCategories[checkedElement]);
               if (checkIfNecessary[1] != 'necessary') {
                 if (element.tagName == 'IFRAME') generateIframeDivs(element);
@@ -78,12 +76,11 @@ export function autoMode(arrToActivate: any) {
 /**
  * Check active cookies in AutoMode
  */
-export function checkCookiesAutoMode() {
+export function checkCookiesAutoMode(): void {
   if (JGC.auto) {
     const checkPreferences = getCookie('JgcPreferences');
     const trueArr = [];
-    // @ts-expect-error TS(2550): Property 'entries' does not exist on type 'ObjectC... Remove this comment to see the full error message
-    for (const [k, v] of Object.entries(checkPreferences['preferences'])) if (v) trueArr.push(k);
+    for (const [k, v] of Object.entries(checkPreferences.preferences)) if (v) trueArr.push(k);
     for (let i = 0; i < trueArr.length; i++) {
       const element = trueArr[i];
     }
@@ -94,11 +91,10 @@ export function checkCookiesAutoMode() {
 /**
  * Generate the storage for "JgcPreferences"
  */
-export function generatePreferenceStorage() {
+export function generatePreferenceStorage(): void {
   const checkPreferences = getCookie('JgcPreferences');
   if (checkPreferences == null) {
     const preferences = {};
-    // @ts-expect-error TS(2550): Property 'entries' does not exist on type 'ObjectC... Remove this comment to see the full error message
     for (const [k, v] of Object.entries(JGC.getCustomCookies)) k == 'necessary' ? (preferences[k] = true) : (preferences[k] = false);
     const saveObj = { preferences };
     saveCookie(saveObj);
@@ -108,7 +104,7 @@ export function generatePreferenceStorage() {
 /**
  * Remove elements and siblings from DOM in AutoMode.
  */
-export function removeElements(element: any) {
+export function removeElements(element: any): void {
   const nextSibling = element.nextSibling;
   // Need a quick timeout
   setTimeout(() => {

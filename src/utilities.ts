@@ -12,7 +12,7 @@ import { getCookie, saveCookie } from './cookies';
 /**
  * Intercept the pressure of the "enter" key
  */
-export function addEnterAction(el: any) {
+export function addEnterAction(el: string): void {
   document.getElementById(el).addEventListener('keyup', e => {
     if (e.keyCode === 13) {
       e.preventDefault();
@@ -24,10 +24,10 @@ export function addEnterAction(el: any) {
 /**
  * Control whether the background should be dark or not
  */
-export function checkBackground() {
+export function checkBackground(): void {
   const getPreferences = getCookie('JgcPreferences');
   if (JGC.bannerConfig.backgroundDark != false) {
-    if (getPreferences['darkBackground'] == false || (getPreferences['darkBackground'] && !getPreferences['duration'])) {
+    if (getPreferences.darkBackground == false || !getPreferences.duration) {
       const modal = document.createElement('div');
       modal.id = 'jgcModal';
       modal.className = checkTailwindPrefix('bg-black bg-opacity-80 fixed min-h-screen top-0 w-full z-index-50');
@@ -41,7 +41,7 @@ export function checkBackground() {
 /**
  * Check if the dark mode should be activated.
  */
-export function checkDarkMode() {
+export function checkDarkMode(): void {
   const htmlClass = document.querySelector('html').classList.contains(checkTailwindPrefix('dark'));
   if (htmlClass) JGC.darkMode = true;
 }
@@ -49,7 +49,7 @@ export function checkDarkMode() {
 /**
  * Check if a prefix for Tailwind has been chosen and updates all class names
  */
-export function checkTailwindPrefix(value: any) {
+export function checkTailwindPrefix(value: string): string {
   const colon = /:/;
   if (checkTailwindPrefix) {
     if (/\s/.test(value)) {
@@ -77,7 +77,6 @@ export function checkTailwindPrefix(value: any) {
         const prefix = value.split(':')[0];
         let newstr = '';
         if (value.includes('dark:group-hover')) {
-          // @ts-expect-error TS(2304): Cannot find name 'el'.
           const prefix2 = el.split(':')[1];
           newstr = value.replace(prefix + ':' + prefix2 + ':', `${prefix}:${prefix2}:${JGC.tailwindPrefix}`);
         } else {
@@ -94,7 +93,7 @@ export function checkTailwindPrefix(value: any) {
 /**
  * Get the max width of the banner
  */
-export function getMaxWidth(defaultValue: any) {
+export function getMaxWidth(defaultValue: string): string {
   if (JGC.bannerConfig?.maxWidth) {
     switch (JGC.bannerConfig.maxWidth) {
       case 'xs':
@@ -148,22 +147,9 @@ export function getMaxWidth(defaultValue: any) {
 }
 
 /**
- * Check if a value is a boolean
- */
-export function isBoolean(value: any, key: any) {
-  if (value != 'undefined' && typeof value == 'boolean') {
-    return true;
-  } else if (value != 'undefined') {
-    return false;
-  } else {
-    throw `: "${key}" is not valid, must be a boolean.`;
-  }
-}
-
-/**
  * Check if a value is a function
  */
-export function isFunction(value: any, key: any) {
+export function isFunction(value: () => any, key: any): () => any {
   if (typeof value == 'function') {
     return value;
   } else {
@@ -174,10 +160,10 @@ export function isFunction(value: any, key: any) {
 /**
  * Checking whether a value is a string or an object (for translations)
  */
-export function isString(value: any, key: any) {
-  if (typeof value === 'string' || value instanceof String) {
-    return (value as any).escape();
-  } else if (typeof value === 'object' || value instanceof Object) {
+export function isString(value: string | object, key: string): string {
+  if (typeof value === 'string') {
+    return value;
+  } else if (typeof value === 'object') {
     return value[JGC.localeString].escape();
   } else {
     throw `: "${key}" is not valid, must be a string or an object.`;
@@ -187,7 +173,7 @@ export function isString(value: any, key: any) {
 /**
  * Load user-defined text
  */
-export function loadText() {
+export function loadText(): void {
   const bannerText = document.getElementById('jgc-banner-text');
   if (bannerText) JGC.bannerText = bannerText.innerHTML;
 
@@ -204,7 +190,7 @@ export function loadText() {
 /**
  * Return icons (if any)
  */
-export function returnIcon() {
+export function returnIcon(): string {
   if (JGC.bannerConfig.icon && JGC.darkMode != true) {
     return `<div><img class="${checkTailwindPrefix('w-4 h-4')}" src="${JGC.bannerConfig.icon}" /></div>`;
   } else if (JGC.bannerConfig.icon && JGC.darkMode == true) {
@@ -217,6 +203,6 @@ export function returnIcon() {
 /**
  * Return logo (if any)
  */
-export function returnLogo() {
+export function returnLogo(): string {
   return `${JGC.bannerConfig.logo ? `<img class="${JGC.bannerConfig.logoClasses ? JGC.bannerConfig.logoClasses : ''}" src="${JGC.bannerConfig.logo}" />` : ''}`;
 }

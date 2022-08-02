@@ -15,7 +15,6 @@ import { generateIframeDivs } from './placeholders';
  */
 export function activateToggledCookies() {
   const checkPreferences = getCookie('JgcPreferences');
-  // @ts-expect-error TS(2550): Property 'entries' does not exist on type 'ObjectC... Remove this comment to see the full error message
   for (const [k, v] of Object.entries(checkPreferences['preferences'])) {
     const tagToCheck = `[data-jgc-tag="${k}"]`,
       cookieExists = document.querySelectorAll(tagToCheck);
@@ -49,7 +48,6 @@ export function activateToggledCookies() {
  */
 export function checkGoogleAnalytics() {
   const checkPreferencesFromStorage = JSON.parse(localStorage.getItem('JgcPreferences'));
-  // @ts-expect-error TS(2550): Property 'entries' does not exist on type 'ObjectC... Remove this comment to see the full error message
   for (const [k, v] of Object.entries(checkPreferencesFromStorage)) {
     if (k != 'necessary') {
       const getGoogleAnalytics = document.getElementById('googleAnalytics');
@@ -107,7 +105,6 @@ export function hideScripts() {
  */
 export function removeDivsOfUserAcceptedIframes() {
   const checkPreferencesFromStorage = JSON.parse(localStorage.getItem('JgcPreferences'));
-  // @ts-expect-error TS(2550): Property 'entries' does not exist on type 'ObjectC... Remove this comment to see the full error message
   for (const [k, v] of Object.entries(checkPreferencesFromStorage)) {
     if (k != 'necessary') {
       const getDivsToRemove = document.querySelectorAll('[data-jgc-remove-style]');
@@ -166,7 +163,6 @@ export function replaceScripts(customAttributeToCheck: any) {
     if (customTypeAttribute) element.setAttribute('type', customTypeAttribute);
     const customSrc = element.getAttribute('data-jgc-src') ? element.getAttribute('data-jgc-src').escape() : null;
     if (customSrc) {
-      // @ts-expect-error TS(2304): Cannot find name 'InstallTrigger'.
       const isFirefox = typeof InstallTrigger !== 'undefined'; // Need this to turn on some cookies on FF
       if (isFirefox) {
         setTimeout(() => {

@@ -6,12 +6,13 @@
  *
  * This project is a fork of the original just-good-cookies project of Francesco Mugnai.
  */
+import type { Activate } from './justgoodcookies';
 import JGC from './justgoodcookies';
 
 /**
  * Activate Google Analytics
  */
-export function activateGoogle() {
+export function activateGoogle(): void {
   const head = document.getElementsByTagName('head')[0];
   const GoogleAnalytics = document.createElement('script');
   const GoogleAnalyticsCode = document.createElement('script');
@@ -35,7 +36,7 @@ export function activateGoogle() {
 /**
  * Activate Facebook Pixel
  */
-export function activateFacebook() {
+export function activateFacebook(): void {
   if (JGC.activate?.FacebookPixel) {
     const FacebookPixel_init = JGC.activate.FacebookPixel.init.escape();
     const FacebookPixel_noscript = document.createElement('noscript');
@@ -63,7 +64,7 @@ export function activateFacebook() {
 /**
  * Google Tag Manager script
  */
-function activateGoogleTagManager(w: any, d: any, s: any, l: any, i: any) {
+function activateGoogleTagManager(w: any, d: any, s: any, l: any, i: any): void {
   w[l] = w[l] || [];
   w[l].push({
     'gtm.start': new Date().getTime(),
@@ -80,30 +81,31 @@ function activateGoogleTagManager(w: any, d: any, s: any, l: any, i: any) {
 /**
  * Check custom user's activations
  */
-export function checkActivations() {
-  const activations = {
+export function checkActivations(): void {
+  const activations: { default: () => void; GoogleAnalytics: () => void; FacebookPixel: () => void; GoogleTagManager: () => void } = {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     default: () => {},
     GoogleAnalytics: () => activateGoogle(),
     FacebookPixel: () => activateFacebook(),
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    GoogleTagManager: () => {},
   };
-  // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-  if (JGC.activate) Object.keys(JGC.activate).forEach(k => (activations[k] || activations['default'])());
+  if (JGC.activate) Object.keys(JGC.activate).forEach(k => (activations[k] || activations.default)());
 }
 
 /**
  * Activate Google Tag Manager
  * TODO: It needs more tests.
  */
-export function googleTagManager() {
+export function googleTagManager(): void {
   if (JGC.activate?.GoogleTagManager) {
     const dataObject = { event: JGC.activate.GoogleTagManager.event_name };
     const GoogleAnalyticsContainerId = JGC.activate.GoogleTagManager.container_id;
     activateGoogleTagManager(window, document, 'script', 'dataLayer', GoogleAnalyticsContainerId);
     if (JGC.activate.GoogleTagManager.variables) {
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-      JGC.activate.GoogleTagManager.variables.forEach((element: any) => (dataObject[element[0]] = element[1]));
+      JGC.activate.GoogleTagManager.variables.forEach(element => (dataObject[element[0]] = element[1]));
     }
-    // @ts-expect-error TS(2304): Cannot find name 'dataLayer'.
-    if (typeof dataLayer != 'undefined') dataLayer.push(dataObject);
+    /*    if (typeof window.dataLayer != 'undefined')
+      window.dataLayer.push(dataObject);*/
   }
 }

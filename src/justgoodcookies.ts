@@ -16,17 +16,79 @@ import { activateToggledCookies, hideScripts, removeScript, removeDivsOfUserAcce
 import { loadBannerLayout } from './styles';
 import { removePlaceholders } from './placeholders';
 import { closePreferencePanel, closePreferencePanelAndSaveAll, setPreferences, loadPreferences, openPanel } from './preferences';
-import { isString, isBoolean, isFunction, checkTailwindPrefix, checkDarkMode, checkBackground, loadText } from './utilities';
+import { isString, isFunction, checkTailwindPrefix, checkDarkMode, checkBackground, loadText } from './utilities';
+
+export type Activate = { GoogleAnalytics: any; FacebookPixel: any; GoogleTagManager: { variables: any[][]; event_name: any[]; container_id: string } };
+
+interface Data {
+  activate: Activate;
+  panel: {
+    bgColor: any;
+    open: boolean;
+    padding: boolean;
+  };
+  cookies: any;
+  style: {
+    accept: any;
+    bannerText: any;
+    bannerTitle: any;
+    closeButton: any;
+    toggles: any;
+    lockIcon: any;
+    panelHeader: any;
+    panelTitle: any;
+    panelText: any;
+    preferenceDiv: any;
+    preferencesText: any;
+    privacyLink: any;
+    reject: any;
+    saveButton: any;
+    stripes: any;
+    servicesTag: any;
+    servicesText: any;
+    saveAllButton: any;
+  };
+  banner: {
+    animation: boolean;
+    backgroundColor: any;
+    backgroundDark: boolean;
+    backgroundImage: any;
+    closeButtonAccept: boolean;
+    disableReject: boolean;
+    icon: any;
+    iconDark: any;
+    innerBackgroundImage: any;
+    logo: any;
+    logoClasses: any;
+    maxWidth: any;
+    onAccept: any;
+    onReject: any;
+    position: any;
+    shortText: boolean;
+    title: any;
+    closeButton: any;
+  };
+  privacyLink: any;
+  text: any;
+  cookieDuration: any;
+  layout: any;
+  tailwindPrefix: any;
+  dark: any;
+  placeholder: any;
+  locale: any;
+  autoCategories: any;
+  autoMode: boolean;
+}
 
 class JustGoodCookies {
-  acceptText: any;
-  activate: any;
-  auto: any;
+  acceptText: boolean;
+  activate: Activate;
+  auto: boolean;
   autoCategories: any;
   banner: any;
   bannerConfig: any;
-  bannerLink: any;
-  bannerText: any;
+  bannerLink: string;
+  bannerText: string;
   config: any;
   cookieTimeout: any;
   customStyle: any;
@@ -35,17 +97,29 @@ class JustGoodCookies {
   getCookiePreferences: any;
   getCustomCookies: any;
   locale: any;
-  localeString: any;
+  localeString: string;
   locales: any;
-  onAccept: any;
-  onReject: any;
+  onAccept: () => any;
+  onReject: () => any;
   panel: any;
   panelFooter: any;
   panelHeader: any;
   placeholder: any;
-  positions: any;
+  positions: object;
   tailwindPrefix: any;
-  text: any;
+  text: {
+    acceptSelectedText: string;
+    acceptText: string;
+    bannerLinkLabel: string;
+    descriptionText: string;
+    panelTitle: string;
+    preferencesText: string;
+    rejectText: string;
+    saveButton: string;
+    saveAllButton: string;
+    servicesTag: string;
+  };
+
   constructor() {
     this.activate = undefined; // Custom Activations
     this.auto = false; // autoMode
@@ -72,7 +146,7 @@ class JustGoodCookies {
     this.text = undefined; // Custom texts
 
     this.getCookieId = getCookieId;
-    this.getCookiePreferences = getCookiePreferences(String.prototype as any).escape = function () {
+    this.getCookiePreferences = getCookiePreferences(String.prototype).escape = function () {
       const replace = {
         '>': '&gt;',
         '<': '&lt;',
@@ -86,25 +160,21 @@ class JustGoodCookies {
   /*
    *  Check the current status
    */
-  checkCookies() {
+  checkCookies(): void {
     const preference = getCookie('JgcPreferences');
-    if (preference['duration']) {
-      const getValue = preference['duration'].value;
+    if (preference.duration) {
+      const getValue = preference.duration.value;
       switch (getValue) {
         case '0': // Cookies rejected :(
-          // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
           if (this.auto) autoMode();
-          // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
           checkCookieExpiration(); // Check if cookie is expired
           hideScripts(); // Hide the scripts
           break;
         case '1': // Cookies accepted :)
-          // @ts-expect-error TS(2304): Cannot find name 'bannerContent'.
           bannerContent.classList.add(checkTailwindPrefix('hidden'));
           checkCookiesAutoMode(); // Check if we are running the autoMode
           removePlaceholders(); // Remove placeholders
           removeDivsOfUserAcceptedIframes(); // Remove hidden divs (if any) for accepted cookies
-          // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
           checkCookieExpiration(); // Check if the cookie is expired
           checkActivations(); // Check if we need to activate some pre-built scripts
           checkGoogleAnalytics(); // Check Google Analytics
@@ -115,7 +185,6 @@ class JustGoodCookies {
       }
     } else {
       // The banner has not been accepted yet, let's turn off all scripts and show the banner
-      // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
       if (this.auto) autoMode();
       hideScripts();
       showBanner();
@@ -125,14 +194,14 @@ class JustGoodCookies {
   /*
    * Accepts cookies
    */
-  yesCookies() {
+  yesCookies(): void {
     checkCookieExpiration('1');
     checkActivations();
     setPreferences();
     activateToggledCookies();
     closePreferencePanelAndSaveAll();
     const checkPreferences = getCookie('JgcPreferences');
-    if (checkPreferences['remove'] > 0) {
+    if (checkPreferences.remove > 0) {
       removeScript(true); // We need to remove them AND refresh the page
     } else {
       googleTagManager(); // Do not trigger Google Tag Manager twice
@@ -148,7 +217,7 @@ class JustGoodCookies {
   /*
    * Reject cookies
    */
-  noCookies() {
+  noCookies(): void {
     checkCookieExpiration('0');
     const getPreferences = getCookie('JgcPreferences');
     const saveObj = { ...getPreferences };
@@ -160,7 +229,7 @@ class JustGoodCookies {
   /**
    * Activate the JGC engine and all the main functions
    */
-  init(data: any) {
+  init(data: Data) {
     data ? data : {};
 
     // Initialize the language
@@ -171,7 +240,7 @@ class JustGoodCookies {
     }
 
     // Check if the autoMode is active or not
-    if (data.autoMode && isBoolean(data.autoMode, 'autoMode')) {
+    if (data.autoMode) {
       const checkPreferences = getCookie('JgcPreferences');
       if (!checkPreferences) {
         const scripts = document.querySelectorAll('iframe,script');
@@ -189,7 +258,6 @@ class JustGoodCookies {
 
     // General config
     this.config = {
-      // @ts-expect-error TS(2304): Cannot find name 'Languages'.
       locale: data.locale !== undefined ? data.locale.escape() : new Languages('en'),
       layout: data.layout.escape() || 'style1',
       privacyLink: data.privacyLink.escape() || '',
@@ -228,13 +296,13 @@ class JustGoodCookies {
 
     // Banner config & style
     this.bannerConfig = {
-      animation: isBoolean(data.banner?.animation, 'animation') ? data.banner.animation : true,
+      animation: data.banner?.animation ? data.banner.animation : true,
       backgroundColor: data.banner?.backgroundColor ? isString(data.banner.backgroundColor, 'backgroundColor') : checkTailwindPrefix('bg-white dark:bg-gray-800'),
-      backgroundDark: data.banner?.backgroundDark ? isBoolean(data.banner.backgroundDark, 'backgroundDark') : false,
+      backgroundDark: data.banner?.backgroundDark ? data.banner.backgroundDark : false,
       backgroundImage: data.banner?.backgroundImage ? isString(data.banner.backgroundImage, 'backgroundImage') : null,
-      closeButton: data.banner?.closeButton ? isBoolean(data.banner.closeButton, 'closeButton') : true,
-      closeButtonAccept: data.banner?.closeButtonAccept ? isBoolean(data.banner.closeButtonAccept, 'closeButtonAccept') : false,
-      disableReject: data.banner?.disableReject ? isBoolean(data.banner.disableReject, 'disableReject') : false,
+      closeButton: data.banner?.closeButton ? data.banner.closeButton : true,
+      closeButtonAccept: data.banner?.closeButtonAccept ? data.banner.closeButtonAccept : false,
+      disableReject: data.banner?.disableReject ? data.banner.disableReject : false,
       icon: data.banner?.icon ? isString(data.banner.icon, 'icon') : null,
       iconDark: data.banner?.iconDark ? isString(data.banner.iconDark, 'iconDark') : null,
       innerBackgroundImage: data.banner?.innerBackgroundImage ? isString(data.banner.innerBackgroundImage, 'innerBackgroundImage') : null,
@@ -243,9 +311,8 @@ class JustGoodCookies {
       maxWidth: data.banner?.maxWidth ? isString(data.banner.maxWidth, 'maxWidth') : undefined,
       onAccept: data.banner?.onAccept ? (this.onAccept = isFunction(data.banner.onAccept, 'onAccept')) : null,
       onReject: data.banner?.onReject ? (this.onReject = isFunction(data.banner.onReject, 'onReject')) : null,
-      // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
-      position: data.banner?.position ? isString(data.banner.position) : undefined,
-      shortText: data.banner?.shortText && isBoolean(data.banner.shortText, 'shortText') ? this.locale.acceptShortText : this.acceptText,
+      position: data.banner?.position ? isString(data.banner.position, 'position') : undefined,
+      shortText: data.banner?.shortText && data.banner.shortText ? this.locale.acceptShortText : this.acceptText,
       title: data.banner?.title ? isString(data.banner.title, 'title') : 'Cookies',
     };
 
@@ -262,8 +329,8 @@ class JustGoodCookies {
     if (data.panel) {
       this.panel = {
         bgColor: data.panel?.bgColor ? isString(data.panel.bgColor, 'bgColor') : null,
-        open: data.panel?.open ? isBoolean(data.panel.open, 'open') : false,
-        padding: data.panel?.padding ? isBoolean(data.panel.padding, 'padding') : false,
+        open: data.panel?.open ? data.panel.open : false,
+        padding: data.panel?.padding ? data.panel.padding : false,
       };
     }
 
