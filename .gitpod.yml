@@ -1,0 +1,12 @@
+image:
+  file: .gitpod.Dockerfile
+
+tasks:
+  - init: nvm install && npm install
+
+vscode:
+  extensions:
+    - firsttris.vscode-jest-runner
+    - dbaeumer.vscode-eslint
+    - esbenp.prettier-vscode
+    - EditorConfig.EditorConfig
