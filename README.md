@@ -1,4 +1,4 @@
-# Just Good Cookies (JGC)
+# Just Good Cookies - TypeScript version with MaterialUI (JGC-TS)
 
 ![JGC Styles](https://raw.githubusercontent.com/francescomugnai/just-good-cookies/main/images/jgc.jpg "JGC")
 
