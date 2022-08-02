@@ -837,6 +837,8 @@ Even though Tailwind CSS is not built-in I still want to mention that it is rele
 
 ## ToDo
 
+- [ ] Convert in TypeScript
+- [ ] Replace Tailwind by MaterialUI
 - [ ] Add more languages
 - [ ] Improve the documentation
 - [ ] Add examples...
