@@ -7,7 +7,7 @@
  * This project is a fork of the original just-good-cookies project of Francesco Mugnai.
  */
 import JGC from './justgoodcookies';
-import { checkTailwindPrefix } from './utilities';
+import { checkTailwindPrefixes } from './utilities';
 import { managePreferences } from './preferences';
 
 /**
@@ -28,16 +28,16 @@ export function generateIframeDivs(element: any) {
       tag.setAttribute('data-jgc-placeholder-tag', getTag);
       tag.setAttribute('data-jgc-placeholder-height', element.getAttribute('height'));
     }
-    tag.classList.add(checkTailwindPrefix('flex'));
-    tag.classList.add(checkTailwindPrefix(`md:pt-0`));
-    tag.classList.add(checkTailwindPrefix(`pt-[56.25%]`));
-    tag.classList.add(checkTailwindPrefix(`md:w-[${returnIframeSize(element, 'width')}]`));
-    tag.classList.add(checkTailwindPrefix(`md:h-[${returnIframeSize(element, 'height')}]`));
-    tag.classList.add(checkTailwindPrefix('w-full'));
-    tag.classList.add(checkTailwindPrefix('items-center'));
-    tag.classList.add(checkTailwindPrefix('justify-center'));
-    tag.classList.add(checkTailwindPrefix('bg-gray-100'));
-    tag.classList.add(checkTailwindPrefix('cursor-pointer'));
+    tag.classList.add(checkTailwindPrefixes('flex'));
+    tag.classList.add(checkTailwindPrefixes(`md:pt-0`));
+    tag.classList.add(checkTailwindPrefixes(`pt-[56.25%]`));
+    tag.classList.add(checkTailwindPrefixes(`md:w-[${returnIframeSize(element, 'width')}]`));
+    tag.classList.add(checkTailwindPrefixes(`md:h-[${returnIframeSize(element, 'height')}]`));
+    tag.classList.add(checkTailwindPrefixes('w-full'));
+    tag.classList.add(checkTailwindPrefixes('items-center'));
+    tag.classList.add(checkTailwindPrefixes('justify-center'));
+    tag.classList.add(checkTailwindPrefixes('bg-gray-100'));
+    tag.classList.add(checkTailwindPrefixes('cursor-pointer'));
     if (JGC.placeholder?.classes) {
       const classes = JGC.placeholder.classes;
       const splitWords = classes.split(/[ ,]+/);
@@ -60,7 +60,7 @@ export function generateIframeDivs(element: any) {
 /**
  * Remove hidden divs
  */
-export function removeHiddenDivs(src: string):void  {
+export function removeHiddenDivs(src: string): void {
   const getDivsToRemove = document.querySelectorAll('[data-jgc-placeholder-tag]');
   if (getDivsToRemove.length > 0) {
     for (let i = 0; i < getDivsToRemove.length; i++) {
@@ -73,7 +73,7 @@ export function removeHiddenDivs(src: string):void  {
 /**
  * Remove placeholders
  */
-export function removePlaceholders() :void{
+export function removePlaceholders(): void {
   const getElementsPlaceholder = document.querySelectorAll('[data-jgc-placeholder]');
   if (getElementsPlaceholder.length > 0) {
     for (let i = 0; i < getElementsPlaceholder.length; i++) {
@@ -103,7 +103,7 @@ export function removePlaceholders() :void{
       removeHiddenDivs(getSrc);
     }
   } else {
-    document.body.querySelectorAll('[data-jgc-tag]').forEach(el => el.classList.remove(checkTailwindPrefix('h-0'), checkTailwindPrefix('w-0')));
+    document.body.querySelectorAll('[data-jgc-tag]').forEach(el => el.classList.remove(checkTailwindPrefixes('h-0'), checkTailwindPrefixes('w-0')));
   }
 }
 

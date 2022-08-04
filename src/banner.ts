@@ -7,7 +7,7 @@
  * This project is a fork of the original just-good-cookies project of Francesco Mugnai.
  */
 import JGC from './justgoodcookies';
-import { checkTailwindPrefix } from './utilities';
+import { checkTailwindPrefixes } from './utilities';
 import { addEnterAction } from './utilities';
 import { managePreferencesLinkListener } from './preferences';
 
@@ -17,7 +17,7 @@ import { managePreferencesLinkListener } from './preferences';
 export function closeBanner() {
   const banner = document.getElementById('bannerContent');
   if (banner) {
-    banner.classList.add(checkTailwindPrefix('opacity-0'), checkTailwindPrefix('pointer-events-none'));
+    banner.classList.add(checkTailwindPrefixes('opacity-0'), checkTailwindPrefixes('pointer-events-none'));
     if (JGC.config.layout != 'style8') {
       // "style8" is a little special. I can not use animations here because the toggle switches repeat in 2 different areas.
       setTimeout(() => {
@@ -59,26 +59,26 @@ export function makeBannerAnimation() {
       case 'top':
         if (bannerDiv) {
           if (JGC.config.layout == 'style7') {
-            document.getElementById('jgc-close-button').classList.remove(checkTailwindPrefix('-top-[8px]'));
-            document.getElementById('jgc-close-button').classList.remove(checkTailwindPrefix('rounded-tr-lg'));
-            document.getElementById('jgc-close-button').classList.remove(checkTailwindPrefix('rounded-tl-lg'));
-            document.getElementById('jgc-close-button').classList.add(checkTailwindPrefix('-bottom-[40px]'));
-            document.getElementById('jgc-close-button').classList.add(checkTailwindPrefix('rounded-br-lg'));
-            document.getElementById('jgc-close-button').classList.add(checkTailwindPrefix('rounded-bl-lg'));
+            document.getElementById('jgc-close-button').classList.remove(checkTailwindPrefixes('-top-[8px]'));
+            document.getElementById('jgc-close-button').classList.remove(checkTailwindPrefixes('rounded-tr-lg'));
+            document.getElementById('jgc-close-button').classList.remove(checkTailwindPrefixes('rounded-tl-lg'));
+            document.getElementById('jgc-close-button').classList.add(checkTailwindPrefixes('-bottom-[40px]'));
+            document.getElementById('jgc-close-button').classList.add(checkTailwindPrefixes('rounded-br-lg'));
+            document.getElementById('jgc-close-button').classList.add(checkTailwindPrefixes('rounded-bl-lg'));
           }
-          bannerDiv.classList.add(checkTailwindPrefix('-translate-y-full'));
+          bannerDiv.classList.add(checkTailwindPrefixes('-translate-y-full'));
           setTimeout(() => {
-            bannerDiv.classList.remove(checkTailwindPrefix('-translate-y-full'));
-            bannerDiv.classList.add(checkTailwindPrefix('translate-y-0'));
+            bannerDiv.classList.remove(checkTailwindPrefixes('-translate-y-full'));
+            bannerDiv.classList.add(checkTailwindPrefixes('translate-y-0'));
           }, 300);
           break;
         }
       case 'bottom':
         if (bannerDiv) {
-          bannerDiv.classList.add(checkTailwindPrefix('translate-y-full'));
+          bannerDiv.classList.add(checkTailwindPrefixes('translate-y-full'));
           setTimeout(() => {
             // bannerDiv.classList.add(checkTailwindPrefix('mb-4'))
-            bannerDiv.classList.remove(checkTailwindPrefix('translate-y-full'));
+            bannerDiv.classList.remove(checkTailwindPrefixes('translate-y-full'));
           }, 300);
         }
         break;

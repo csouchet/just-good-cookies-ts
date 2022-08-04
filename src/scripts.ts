@@ -7,38 +7,34 @@
  * This project is a fork of the original just-good-cookies project of Francesco Mugnai.
  */
 import { getCookie, saveCookie } from './cookies';
-import { checkTailwindPrefix } from './utilities';
+import { checkTailwindPrefixes } from './utilities';
 import { generateIframeDivs } from './placeholders';
 
 /**
  * Enable scripts
  */
-export function activateToggledCookies() {
+export function activateToggledCookies(): void {
   const checkPreferences = getCookie('JgcPreferences');
-  for (const [k, v] of Object.entries(checkPreferences['preferences'])) {
-    const tagToCheck = `[data-jgc-tag="${k}"]`,
-      cookieExists = document.querySelectorAll(tagToCheck);
-    if (v == true) {
+  Object.entries(checkPreferences.preferences).forEach(([key, value]) => {
+    const tagToCheck = `[data-jgc-tag="${key}"]`;
+    if (value == true) {
       replaceScripts(tagToCheck);
     } else {
-      cookieExists.forEach(element => {
-        const parent = element.parentNode;
-        if ((parent as any).hasAttribute('data-jgc-placeholder')) {
+      document.querySelectorAll<HTMLElement>(tagToCheck).forEach(element => {
+        const parent = element.parentNode as HTMLElement;
+        if (parent.hasAttribute('data-jgc-placeholder')) {
           generateIframeDivs(element);
-        } else {
-          if (v != false) {
-            element.classList.add(checkTailwindPrefix('hidden'));
-            element.innerHTML = '';
-          }
+        } else if (value != false) {
+          element.classList.add(checkTailwindPrefixes('hidden'));
+          element.innerHTML = '';
         }
       });
     }
-  }
-  if (checkPreferences['darkBackground']) {
-    const saveObj = { ...checkPreferences, darkBackground: false };
-    saveCookie(saveObj);
-    const modal = document.getElementById('jgcModal');
-    if (modal) modal.classList.add(checkTailwindPrefix('hidden'));
+  });
+
+  if (checkPreferences.darkBackground) {
+    saveCookie({ ...checkPreferences, darkBackground: false });
+    document.getElementById('jgcModal')?.classList.add(checkTailwindPrefixes('hidden'));
   }
 }
 
@@ -46,105 +42,100 @@ export function activateToggledCookies() {
  * Delete Google Analytics cookies if the user has changed their settings in this regard
  * TODO: It needs to be improved.
  */
-export function checkGoogleAnalytics() {
+export function checkGoogleAnalytics(): void {
   const checkPreferencesFromStorage = JSON.parse(localStorage.getItem('JgcPreferences'));
-  for (const [k, v] of Object.entries(checkPreferencesFromStorage)) {
-    if (k != 'necessary') {
+  Object.entries(checkPreferencesFromStorage).forEach(([key, value]) => {
+    if (key != 'necessary') {
       const getGoogleAnalytics = document.getElementById('googleAnalytics');
-      if (getGoogleAnalytics) {
+      // TODO: This part can be improved
+      if (getGoogleAnalytics && key == getGoogleAnalytics.getAttribute('data-jgc-tag') && value == false) {
         const urlParams = (new URL(getGoogleAnalytics.getAttribute('data-jgc-src')) as any).escape();
         const googleAnalyticsId = urlParams.searchParams.get('id');
         const domain = window.location.hostname;
-        const getAttribute = getGoogleAnalytics.getAttribute('data-jgc-tag');
-        // TODO: This part can be improved
-        if (k == getAttribute && v == false) {
-          document.cookie = `_ga=; path=/; domain=${domain}; expires=` + new Date(0).toUTCString();
-          document.cookie = `_ga=; path=/; domain=.${domain}; expires=` + new Date(0).toUTCString();
-          document.cookie = `_ga_${googleAnalyticsId.slice(2)}=; path=/; domain=${domain}; expires=` + new Date(0).toUTCString();
-          document.cookie = `_ga_${googleAnalyticsId.slice(2)}=; path=/; domain=.${domain}; expires=` + new Date(0).toUTCString();
-          document.cookie = `_gid=; path=/; domain=${domain}; expires=` + new Date(0).toUTCString();
-          document.cookie = `_gid=; path=/; domain=.${domain}; expires=` + new Date(0).toUTCString();
-          document.cookie = `_gat_gtag_${googleAnalyticsId}=; path=/; domain=${domain}; expires=` + new Date(0).toUTCString();
-          document.cookie = `_gat_gtag_${googleAnalyticsId}=; path=/; domain=.${domain}; expires=` + new Date(0).toUTCString();
-          document.cookie = `_gat_gtag_UA_${googleAnalyticsId.slice(3, -2)}_1=; path=/; domain=${domain}; expires=` + new Date(0).toUTCString();
-          document.cookie = `_gat_gtag_UA_${googleAnalyticsId.slice(3, -2)}_1=; path=/; domain=.${domain}; expires=` + new Date(0).toUTCString();
-        }
+
+        document.cookie = `_ga=; path=/; domain=${domain}; expires=` + new Date(0).toUTCString();
+        document.cookie = `_ga=; path=/; domain=.${domain}; expires=` + new Date(0).toUTCString();
+        document.cookie = `_ga_${googleAnalyticsId.slice(2)}=; path=/; domain=${domain}; expires=` + new Date(0).toUTCString();
+        document.cookie = `_ga_${googleAnalyticsId.slice(2)}=; path=/; domain=.${domain}; expires=` + new Date(0).toUTCString();
+        document.cookie = `_gid=; path=/; domain=${domain}; expires=` + new Date(0).toUTCString();
+        document.cookie = `_gid=; path=/; domain=.${domain}; expires=` + new Date(0).toUTCString();
+        document.cookie = `_gat_gtag_${googleAnalyticsId}=; path=/; domain=${domain}; expires=` + new Date(0).toUTCString();
+        document.cookie = `_gat_gtag_${googleAnalyticsId}=; path=/; domain=.${domain}; expires=` + new Date(0).toUTCString();
+        document.cookie = `_gat_gtag_UA_${googleAnalyticsId.slice(3, -2)}_1=; path=/; domain=${domain}; expires=` + new Date(0).toUTCString();
+        document.cookie = `_gat_gtag_UA_${googleAnalyticsId.slice(3, -2)}_1=; path=/; domain=.${domain}; expires=` + new Date(0).toUTCString();
       }
     }
-  }
+  });
 }
 
 /**
  * Hide the scripts
  */
-export function hideScripts() {
-  const getElementsJgc = document.querySelectorAll('[data-jgc-tag]');
-  const getElementsToHide = document.querySelectorAll('[data-jgc-remove]');
-  const getElementsPlaceholder = document.querySelectorAll('[data-jgc-placeholder]');
-  for (let i = 0; i < getElementsJgc.length; i++) {
-    const element = getElementsJgc[i];
+export function hideScripts(): void {
+  const placeholderElements = document.querySelectorAll<HTMLElement>('[data-jgc-placeholder]');
+
+  document.querySelectorAll('[data-jgc-tag]').forEach(element => {
     if (element.getAttribute('data-jgc-tag') != 'necessary') {
       generateIframeDivs(element);
     } else {
-      if (getElementsPlaceholder) {
-        getElementsPlaceholder.forEach(e => {
-          if (e.contains(element)) {
-            (e as any).style.backgroundColor = '';
-            e.className = '';
-          }
-        });
-      }
+      placeholderElements?.forEach(e => {
+        if (e.contains(element)) {
+          e.style.backgroundColor = '';
+          e.className = '';
+        }
+      });
       replaceScripts(`[data-jgc-tag="necessary"]`);
     }
+  });
+
+  if (document.querySelectorAll('[data-jgc-remove]').length > 0) {
+    removeScript(true);
   }
-  if (getElementsToHide.length > 0) removeScript(true);
 }
 
 /**
  * Remove all divs that hide user accepted iframes
  */
-export function removeDivsOfUserAcceptedIframes() {
-  const checkPreferencesFromStorage = JSON.parse(localStorage.getItem('JgcPreferences'));
-  for (const [k, v] of Object.entries(checkPreferencesFromStorage)) {
-    if (k != 'necessary') {
-      const getDivsToRemove = document.querySelectorAll('[data-jgc-remove-style]');
-      for (let i = 0; i < getDivsToRemove.length; i++) {
-        const element = getDivsToRemove[i];
-        if (element.getAttribute('data-jgc-tag') == k && v == true) element.remove();
-      }
+export function removeDivsOfUserAcceptedIframes(): void {
+  Object.entries(JSON.parse(localStorage.getItem('JgcPreferences'))).forEach(([key, value]) => {
+    if (key != 'necessary') {
+      document.querySelectorAll('[data-jgc-remove-style]').forEach(element => {
+        if (element.getAttribute('data-jgc-tag') == key && value == true) {
+          element.remove();
+        }
+      });
     }
-  }
+  });
 }
+
+type Service = { service: string; tag: string };
 
 /**
  * Remove scripts from the DOM (if necessary)
  */
-export function removeScript(value: any) {
+export function removeScript(value: boolean): void {
   const scriptsToRemove = document.querySelectorAll('[data-jgc-remove]');
+  const preferencesCookie = getCookie('JgcPreferences');
+
   if (value && scriptsToRemove.length > 0) {
-    const getPreferences = getCookie('JgcPreferences');
-    const saveObj = { ...getPreferences, remove: scriptsToRemove.length };
-    saveCookie(saveObj);
-    const checkPreferences = getCookie('JgcPreferences');
-    const servicesToReturn: any = [];
+    const updatedPreferencesCookie = { ...preferencesCookie, remove: scriptsToRemove.length };
+    saveCookie(updatedPreferencesCookie);
+
+    const servicesToReturn: Service[] = [];
     scriptsToRemove.forEach(element => {
       const service = element.getAttribute('data-jgc-service');
-      if (service && service.length > 0) {
-        const item = { service: service, tag: element.getAttribute('data-jgc-tag') };
-        servicesToReturn.push(item);
-        const updatedObj = { ...saveObj, servicesRemoved: servicesToReturn };
-        saveCookie(updatedObj);
+      if (service?.length > 0) {
+        servicesToReturn.push({ service, tag: element.getAttribute('data-jgc-tag') });
+        saveCookie({ ...updatedPreferencesCookie, servicesRemoved: servicesToReturn });
       }
-      if (!checkPreferences['preferences'][element.getAttribute('data-jgc-tag')] || checkPreferences['preferences'][element.getAttribute('data-jgc-tag')] == false)
+      if (!getCookie('JgcPreferences').preferences[element.getAttribute('data-jgc-tag')]) {
         element.remove();
+      }
     });
   } else {
-    const getPreferences = getCookie('JgcPreferences');
-    const saveObj = { ...getPreferences, remove: 0 };
-    saveCookie(saveObj);
-    if (!getPreferences['refresh']) {
-      const updatedObj = { ...saveObj, refresh: true };
-      saveCookie(updatedObj);
+    const updatedPreferencesCookie = { ...preferencesCookie, remove: 0, refresh: true };
+    saveCookie(updatedPreferencesCookie);
+    if (!preferencesCookie.refresh) {
       window.location.reload();
     }
   }
@@ -153,37 +144,35 @@ export function removeScript(value: any) {
 /**
  * Replace the attribute "jgc" from scripts if the user accepts
  */
-export function replaceScripts(customAttributeToCheck: any) {
-  const getElementsToShow = document.querySelectorAll(customAttributeToCheck);
-  for (let i = 0; i < getElementsToShow.length; i++) {
-    const element = getElementsToShow[i];
+export function replaceScripts(customAttributeToCheck: string): void {
+  document.querySelectorAll<HTMLElement>(customAttributeToCheck).forEach(element => {
     element.style.display = '';
     element.style.backgroundColor = '';
+
     const customTypeAttribute = element.getAttribute('data-jgc-type');
-    if (customTypeAttribute) element.setAttribute('type', customTypeAttribute);
-    const customSrc = element.getAttribute('data-jgc-src') ? element.getAttribute('data-jgc-src').escape() : null;
-    if (customSrc) {
-      const isFirefox = typeof InstallTrigger !== 'undefined'; // Need this to turn on some cookies on FF
-      if (isFirefox) {
+    customTypeAttribute && element.setAttribute('type', customTypeAttribute);
+
+    const src = element.getAttribute('data-jgc-src');
+    if (src) {
+      const customSrc = escape(src);
+      if ('InstallTrigger' in window) {
         setTimeout(() => {
           element.setAttribute('src', customSrc);
         }, 100);
       } else {
         element.setAttribute('src', customSrc);
       }
-      element.classList.remove(checkTailwindPrefix('hidden'));
+      element.classList.remove(checkTailwindPrefixes('hidden'));
     }
+
     // TODO: This part can be improved
-    if (element.hasAttribute('data-jgc-remove')) {
-      if (element.hasChildNodes()) {
-        for (let i = 0; i < element.children.length; i++) {
-          const el = element.children[i];
-          if (el.hasAttribute('data-jgc-src')) {
-            const customSrc = el.getAttribute('data-jgc-src').escape();
-            el.setAttribute('src', customSrc);
-          }
+    if (element.hasAttribute('data-jgc-remove') && element.hasChildNodes()) {
+      for (let i = 0; i < element.children.length; i++) {
+        const child = element.children[i];
+        if (child.hasAttribute('data-jgc-src')) {
+          child.setAttribute('src', escape(child.getAttribute('data-jgc-src')));
         }
       }
     }
-  }
+  });
 }

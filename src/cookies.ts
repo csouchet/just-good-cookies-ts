@@ -9,40 +9,38 @@
 import JGC from './justgoodcookies';
 import { showBanner } from './banner';
 
+export type GetCustomCookies = { [key: string]: boolean };
+
 interface Cookie {
-  remove: boolean;
-  darkBackground: boolean;
-  duration: { expiry: string; value: string };
-  preferences: any;
+  refresh?: boolean;
+  remove?: boolean | number;
+  darkBackground?: boolean;
+  duration?: { expiry: string; value: string };
+  preferences?: GetCustomCookies;
   id?: string;
+  servicesRemoved?: {
+    service: string;
+    tag: string;
+  }[];
+  enable?: string[];
 }
 
-type CookieType = 'JgcPreferences';
+export type CookieType = 'JgcPreferences';
 
 /*
  * Check the expiration date of the cookie
  */
-export function checkCookieExpiration(val: string): void {
-  const name: CookieType = 'JgcPreferences';
-  const checkPreference = getCookie(name);
-  const cookieDuration = JGC.cookieTimeout * 24 * 60 * 60 * 1000;
+export function checkCookieExpiration(value?: string): void {
+  const cookie = getCookie('JgcPreferences');
   const date = new Date();
-  date.setTime(date.getTime() + cookieDuration);
-  if (!checkPreference.duration) {
-    const getPreferences = getCookie(name);
-    const uniqueId = Date.now() + Math.random().toString(16).slice(2);
-    const duration = { value: val, expiry: date.toString() };
-    saveCookie({ ...getPreferences, duration, id: uniqueId });
-  } else {
-    const now = new Date();
-    const storedData = new Date(checkPreference.duration.expiry);
-    if (now.setHours(0, 0, 0, 0) >= storedData.setHours(0, 0, 0, 0)) {
-      const getPreferences = getCookie(name);
-      delete getPreferences.duration;
-      const duration = { value: '1', expiry: date.toString() };
-      saveCookie({ ...getPreferences, duration });
-      showBanner();
-    }
+  date.setTime(date.getTime() + JGC.cookieTimeout * 24 * 60 * 60 * 1000);
+
+  if (!cookie.duration) {
+    saveCookie({ ...cookie, duration: { value, expiry: date.toString() }, id: Date.now() + Math.random().toString(16).slice(2) });
+  } else if (new Date().setHours(0, 0, 0, 0) >= new Date(cookie.duration.expiry).setHours(0, 0, 0, 0)) {
+    delete cookie.duration;
+    saveCookie({ ...cookie, duration: { value: '1', expiry: date.toString() } });
+    showBanner();
   }
 }
 
@@ -50,50 +48,36 @@ export function checkCookieExpiration(val: string): void {
  * Get cookie
  */
 export function getCookie(name: CookieType): Cookie {
-  const cookie = {};
+  const cookie: Cookie = {};
   document.cookie.split(';').forEach(function (el) {
     const [k, v] = el.split('=');
     cookie[k.trim()] = v;
   });
-  if (cookie[name]) {
-    return JSON.parse(cookie[name]);
-  } else {
-    return null;
-  }
+  return cookie[name] ? JSON.parse(cookie[name]) : null;
 }
 
 /**
  * Get cookie preferences (useful for the callbacks from the frontend)
  */
 export function getCookieId(name: CookieType): void {
-  const cookie = {};
+  const cookie: Cookie = {};
   document.cookie.split(';').forEach(function (el) {
     const [k, v] = el.split('=');
     cookie[k.trim()] = v;
   });
-  if (cookie[name]) {
-    const cookieName = JSON.parse(cookie[name]);
-    return cookieName.id;
-  } else {
-    return null;
-  }
+  return cookie[name] ? JSON.parse(cookie[name]).id : null;
 }
 
 /**
  * Get cookie (useful for a callback from the frontend)
  */
 export function getCookiePreferences(name: CookieType): void {
-  const cookie = {};
+  const cookie: Cookie = {};
   document.cookie.split(';').forEach(function (el) {
     const [k, v] = el.split('=');
     cookie[k.trim()] = v;
   });
-  if (cookie[name]) {
-    const cookie = JSON.parse(cookie[name]);
-    return cookie.preferences;
-  } else {
-    return null;
-  }
+  return cookie[name] ? JSON.parse(cookie[name]).preferences : null;
 }
 
 /**
@@ -101,8 +85,7 @@ export function getCookiePreferences(name: CookieType): void {
  */
 export function refreshLocalStorage(): void {
   const checkPreferences = getCookie('JgcPreferences');
-  const saveObj = { ...checkPreferences.preferences };
-  localStorage.setItem('JgcPreferences', JSON.stringify(saveObj));
+  localStorage.setItem('JgcPreferences', JSON.stringify(checkPreferences.preferences));
 }
 
 /**
@@ -110,22 +93,21 @@ export function refreshLocalStorage(): void {
  */
 export function saveCookie(saveObj: Cookie): void {
   const checkPreferences = getCookie('JgcPreferences');
-  if (checkPreferences && checkPreferences.duration) {
-    const expiration = checkPreferences.duration.expiry;
-    document.cookie = `JgcPreferences=${JSON.stringify(saveObj)};expires= ${expiration};path=/;SameSite=Strict`;
-  } else {
-    document.cookie = `JgcPreferences=${JSON.stringify(saveObj)};path=/;SameSite=Strict;`;
-  }
+  const cookieExpires = checkPreferences?.duration ? `expires=${checkPreferences.duration.expiry}` : '';
+  document.cookie = `JgcPreferences=${JSON.stringify(saveObj)};path=/;SameSite=Strict;${cookieExpires}`;
 }
 
 /**
  * Save cookie categories
  */
 export function saveCookiesPreferences(): void {
-  const arr = [];
-  if (JGC.activate) for (const [key, value] of Object.entries(JGC.activate)) arr.push(value.dataJgcTag);
-  for (const [k, v] of Object.entries(JGC.getCustomCookies)) arr.push(k);
-  const preferences = getCookie('JgcPreferences');
-  const saveObj = { ...preferences, enable: arr };
-  saveCookie(saveObj);
+  const arr: string[] = [];
+  JGC.activate &&
+    Object.values(JGC.activate).forEach(value => {
+      arr.push(value.dataJgcTag);
+    });
+  Object.keys(JGC.getCustomCookies).forEach(key => {
+    arr.push(key);
+  });
+  saveCookie({ ...getCookie('JgcPreferences'), enable: arr });
 }

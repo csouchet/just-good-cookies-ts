@@ -7,8 +7,9 @@
  * This project is a fork of the original just-good-cookies project of Francesco Mugnai.
  */
 
+import type { GetCustomCookies } from './justgoodcookies';
 import JGC from './justgoodcookies';
-import { checkTailwindPrefix } from './utilities';
+import { checkTailwindPrefixes } from './utilities';
 import { refreshLocalStorage, getCookie, saveCookie } from './cookies';
 import { closeBanner } from './banner';
 import { activateToggledCookies, removeScript } from './scripts';
@@ -20,39 +21,39 @@ export function animateToggle(val: any, buttonType: any) {
   const toggle = document.getElementById('toggle-' + buttonType + '-div');
   const toggleRight = document.getElementById('toggle-' + buttonType + '-right');
   const toggleNecessary = document.getElementById('toggle-necessary-right-fixed');
-  const bgColor = JGC.customStyle?.toggles ? JGC.customStyle.toggles : checkTailwindPrefix('bg-green-200');
+  const bgColor = JGC.customStyle?.toggles ? JGC.customStyle.toggles : checkTailwindPrefixes('bg-green-200');
   if (val && toggle != null && toggleRight != null) {
-    toggle.classList.remove(checkTailwindPrefix('bg-gray-800'), checkTailwindPrefix('dark:bg-gray-700'));
+    toggle.classList.remove(checkTailwindPrefixes('bg-gray-800'), checkTailwindPrefixes('dark:bg-gray-700'));
     toggle.classList.add(bgColor);
-    toggleRight.classList.remove(checkTailwindPrefix('translate-x-0'));
-    toggleRight.classList.remove(checkTailwindPrefix('ml-0.5'));
-    toggleRight.classList.add(checkTailwindPrefix('-ml-0.5'));
-    toggleRight.classList.add(checkTailwindPrefix('border-green-400'));
+    toggleRight.classList.remove(checkTailwindPrefixes('translate-x-0'));
+    toggleRight.classList.remove(checkTailwindPrefixes('ml-0.5'));
+    toggleRight.classList.add(checkTailwindPrefixes('-ml-0.5'));
+    toggleRight.classList.add(checkTailwindPrefixes('border-green-400'));
     // toggleRight.classList.add(checkTailwindPrefix('translate-x-full'))
-    toggleRight.classList.remove(checkTailwindPrefix('left-0'));
-    toggleRight.classList.add(checkTailwindPrefix('absolute'));
-    toggleRight.classList.add(checkTailwindPrefix('right-0'));
+    toggleRight.classList.remove(checkTailwindPrefixes('left-0'));
+    toggleRight.classList.add(checkTailwindPrefixes('absolute'));
+    toggleRight.classList.add(checkTailwindPrefixes('right-0'));
   } else if (!val) {
-    toggle.classList.remove(checkTailwindPrefix('translate-x-full'));
+    toggle.classList.remove(checkTailwindPrefixes('translate-x-full'));
     toggle.classList.remove(bgColor);
-    toggle.classList.add(checkTailwindPrefix('bg-gray-800'), checkTailwindPrefix('dark:bg-gray-700'));
-    toggleRight.classList.remove(checkTailwindPrefix('-ml-0.5'));
-    toggleRight.classList.remove(checkTailwindPrefix('translate-x-full'));
-    toggleRight.classList.remove(checkTailwindPrefix('border-green-400'));
-    toggleRight.classList.add(checkTailwindPrefix('ml-0.5'));
-    toggleRight.classList.add(checkTailwindPrefix('translate-x-0'));
-    toggleRight.classList.add(checkTailwindPrefix('left-0'));
+    toggle.classList.add(checkTailwindPrefixes('bg-gray-800'), checkTailwindPrefixes('dark:bg-gray-700'));
+    toggleRight.classList.remove(checkTailwindPrefixes('-ml-0.5'));
+    toggleRight.classList.remove(checkTailwindPrefixes('translate-x-full'));
+    toggleRight.classList.remove(checkTailwindPrefixes('border-green-400'));
+    toggleRight.classList.add(checkTailwindPrefixes('ml-0.5'));
+    toggleRight.classList.add(checkTailwindPrefixes('translate-x-0'));
+    toggleRight.classList.add(checkTailwindPrefixes('left-0'));
   } else if (val && buttonType == 'necessary' && toggleNecessary) {
-    toggle.classList.remove(checkTailwindPrefix('bg-gray-800'), checkTailwindPrefix('dark:bg-gray-700'));
+    toggle.classList.remove(checkTailwindPrefixes('bg-gray-800'), checkTailwindPrefixes('dark:bg-gray-700'));
     toggle.classList.add(bgColor);
-    toggleNecessary.classList.remove(checkTailwindPrefix('ml-0.5'));
-    toggleNecessary.classList.add(checkTailwindPrefix('-ml-0.5'));
-    toggleNecessary.classList.remove(checkTailwindPrefix('translate-x-0'));
-    toggleNecessary.classList.add(checkTailwindPrefix('border-green-400'));
+    toggleNecessary.classList.remove(checkTailwindPrefixes('ml-0.5'));
+    toggleNecessary.classList.add(checkTailwindPrefixes('-ml-0.5'));
+    toggleNecessary.classList.remove(checkTailwindPrefixes('translate-x-0'));
+    toggleNecessary.classList.add(checkTailwindPrefixes('border-green-400'));
     // toggleNecessary.classList.add(checkTailwindPrefix('translate-x-full'))
-    toggleNecessary.classList.remove(checkTailwindPrefix('left-0'));
-    toggleNecessary.classList.add(checkTailwindPrefix('absolute'));
-    toggleNecessary.classList.add(checkTailwindPrefix('right-0'));
+    toggleNecessary.classList.remove(checkTailwindPrefixes('left-0'));
+    toggleNecessary.classList.add(checkTailwindPrefixes('absolute'));
+    toggleNecessary.classList.add(checkTailwindPrefixes('right-0'));
   }
 }
 
@@ -70,31 +71,31 @@ export function changeSettings(toggleClicked: any) {
 /**
  * Change the value of toggles
  */
-export function changeToggle() {
+export function changeToggle(): void {
   const checkPreferences = getCookie('JgcPreferences');
-  for (const [k, v] of Object.entries(checkPreferences['preferences'])) if (v == true) animateToggle(true, `${k}`);
+  Object.entries(checkPreferences['preferences']).forEach(([key, value]) => {
+    if (value) {
+      animateToggle(true, key);
+    }
+  });
 }
 
 /**
  * Close the settings panel and reload the page
  */
-export function closePreferencePanel() {
+export function closePreferencePanel(): void {
   activateToggledCookies();
   removeScript(false);
   const date = new Date();
   date.setTime(date.getTime() + JGC.cookieTimeout);
-  const item = {
-    value: '1',
-    expiry: date,
-  };
-  const checkPreferencesFromStorage = JSON.parse(localStorage.getItem('JgcPreferences'));
-  const getPreferences = getCookie('JgcPreferences');
-  const saveObj = {
-    ...getPreferences,
-    preferences: checkPreferencesFromStorage,
-    duration: item,
-  };
-  saveCookie(saveObj);
+  saveCookie({
+    ...getCookie('JgcPreferences'),
+    preferences: JSON.parse(localStorage.getItem('JgcPreferences')),
+    duration: {
+      value: '1',
+      expiry: date.toString(),
+    },
+  });
   closeBanner();
   // And yes, we need to refresh the page to activate specific cookies. Maybe this part can be improved.
   window.location.reload();
@@ -103,37 +104,39 @@ export function closePreferencePanel() {
 /**
  * Change the local storage on "Save All"
  */
-export function closePreferencePanelAndSaveAll() {
+export function closePreferencePanelAndSaveAll(): void {
   const checkPreferencesFromStorage = JSON.parse(localStorage.getItem('JgcPreferences'));
   const preferences = {};
-  for (const [k, v] of Object.entries(checkPreferencesFromStorage)) preferences[k] = true;
+  Object.keys(checkPreferencesFromStorage).forEach(key => (preferences[key] = true));
   localStorage.setItem('JgcPreferences', JSON.stringify(preferences));
-  if (document.getElementById('preferenceDiv')) closePreferencePanel();
+  if (document.getElementById('preferenceDiv')) {
+    closePreferencePanel();
+  }
 }
 
 /**
  * Generate single options (for the panel)
  */
-export function generateOptions() {
-  let arr: any = [],
-    cookieExists = getCookie('JgcPreferences');
-  for (const [k, v] of Object.entries(JGC.getCustomCookies)) {
-    if (cookieExists['enable'].length > 0 && cookieExists['enable'].includes(k)) {
+export function generateOptions(): string {
+  let arr = '';
+  const cookieExists = getCookie('JgcPreferences');
+  Object.entries(JGC.getCustomCookies).forEach(([key, value]) => {
+    if (cookieExists['enable'].length > 0 && cookieExists['enable'].includes(key)) {
       arr += `
-        <div class="${checkTailwindPrefix('flex items-center space-x-6 py-1 px-4')} ${JGC.customStyle?.stripes ? `${JGC.customStyle.stripes}` : ''} ">
+        <div class="${checkTailwindPrefixes('flex items-center space-x-6 py-1 px-4')} ${JGC.customStyle?.stripes ? `${JGC.customStyle.stripes}` : ''} ">
           <div>
-            <div class="${checkTailwindPrefix('flex items-center justify-center')}">
-            <div id="toggle-${k}-div" class="${checkTailwindPrefix('relative w-12 h-7 transition duration-200 ease-linear rounded-full bg-gray-800 dark:bg-gray-700')}">
-              <label id="${k == 'necessary' ? `toggle-necessary-right-fixed` : `toggle-${k}-right`}"
-                for="toggle-${k}" class="${checkTailwindPrefix(
+            <div class="${checkTailwindPrefixes('flex items-center justify-center')}">
+            <div id="toggle-${key}-div" class="${checkTailwindPrefixes('relative w-12 h-7 transition duration-200 ease-linear rounded-full bg-gray-800 dark:bg-gray-700')}">
+              <label id="${key == 'necessary' ? `toggle-necessary-right-fixed` : `toggle-${key}-right`}"
+                for="toggle-${key}" class="${checkTailwindPrefixes(
         'bg-gray-100 absolute left-0 w-6 h-6 mt-0.5 ml-0.5 transition duration-100 ease-linear transform rounded-full cursor-pointer mr-[2px]',
       )}">
                 ${
-                  k == 'necessary'
+                  key == 'necessary'
                     ? `
-                <div class="${checkTailwindPrefix('p-1 flex items-center justify-center')}">
+                <div class="${checkTailwindPrefixes('p-1 flex items-center justify-center')}">
                   <svg class="${
-                    JGC.customStyle?.lockIcon ? JGC.customStyle.lockIcon : checkTailwindPrefix('text-green-600')
+                    JGC.customStyle?.lockIcon ? JGC.customStyle.lockIcon : checkTailwindPrefixes('text-green-600')
                   }" fill="currentColor" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 512 512">
                     <g>
                       <path d="m432,224h-48v-96c0-70.578-57.422-128-128-128s-128,57.422-128,128v96h-48c-8.836,0-16,7.164-16,16v256c0,8.836 7.164,16 16,16h352c8.836,0 16-7.164 16-16v-256c0-8.836-7.164-16-16-16zm-272-96c0-52.938 43.063-96 96-96s96,43.063 96,96v96h-16v-96c0-44.109-35.891-80-80-80s-80,35.891-80,80v96h-16v-96zm48,96v-96c0-26.469 21.531-48 48-48 26.469,0 48,21.531 48,48v96h-96zm208,256h-320v-224h320v224z"/>
@@ -145,42 +148,42 @@ export function generateOptions() {
                     : ``
                 }
               </label>
-              <input tabindex="0" type="checkbox" id="toggle-${k}" name="toggle-${k}" class="${checkTailwindPrefix('w-full h-full appearance-none focus:shadow-2xl ')}"/>
+              <input tabindex="0" type="checkbox" id="toggle-${key}" name="toggle-${key}" class="${checkTailwindPrefixes('w-full h-full appearance-none focus:shadow-2xl ')}"/>
             </div>
           </div>
         </div>
-      <div class="${JGC.customStyle?.servicesTag ? JGC.customStyle.services : `${checkTailwindPrefix('dark:text-gray-300')}`} ${checkTailwindPrefix('w-full')}">
-          <div class="${checkTailwindPrefix('flex items-center space-x-2')}">
-            <h4 class="${checkTailwindPrefix('font-bold text-md')}">${v.title}</h4>
+      <div class="${JGC.customStyle?.servicesTag ? JGC.customStyle.services : `${checkTailwindPrefixes('dark:text-gray-300')}`} ${checkTailwindPrefixes('w-full')}">
+          <div class="${checkTailwindPrefixes('flex items-center space-x-2')}">
+            <h4 class="${checkTailwindPrefixes('font-bold text-md')}">${value.title}</h4>
           </div>
-          <div class="${JGC.customStyle?.panelText ? JGC.customStyle.panelText : `${checkTailwindPrefix('dark:text-gray-300')}`} ${checkTailwindPrefix('text-xs md:text-md')}">${
-        v.description
-      }</div>
-          ${returnServices(k)}
+          <div class="${JGC.customStyle?.panelText ? JGC.customStyle.panelText : `${checkTailwindPrefixes('dark:text-gray-300')}`} ${checkTailwindPrefixes(
+        'text-xs md:text-md',
+      )}">${value.description}</div>
+          ${returnServices(key)}
         </div>
       </div>`;
       setTimeout(() => {
-        document.getElementById(`toggle-${k}-right`) && document.getElementById(`toggle-${k}-right`).addEventListener('click', () => changeSettings(`${k}`));
-        const getLabel = document.getElementById(`toggle-${k}`);
+        document.getElementById(`toggle-${key}-right`) && document.getElementById(`toggle-${key}-right`).addEventListener('click', () => changeSettings(`${key}`));
+        const getLabel = document.getElementById(`toggle-${key}`);
         if (getLabel) {
           getLabel.addEventListener('keyup', e => {
             if (e.keyCode === 13) {
               e.preventDefault();
-              changeSettings(`${k}`);
+              changeSettings(`${key}`);
             }
           });
         }
         if (JGC.config.layout == 'style8') changeToggle();
       }, 1);
     }
-  }
+  });
   return arr;
 }
 
 /**
  * Load preferences
  */
-export function loadPreferences() {
+export function loadPreferences(): void {
   setTimeout(() => {
     const findPreferenceButton = document.querySelectorAll('[data-jgc-preferences]');
     const preferenceButton = findPreferenceButton[0];
@@ -191,40 +194,40 @@ export function loadPreferences() {
 /**
  * Return an array of services
  */
-function makeArrForServices(value: any) {
-  return `<div class="${JGC.customStyle?.toggles ? JGC.customStyle.toggles : checkTailwindPrefix('bg-green-200')}
-  ${JGC.customStyle?.servicesTag ? JGC.customStyle.servicesTag : checkTailwindPrefix('text-green-800')}
-  ${checkTailwindPrefix('px-2 py-0.5 rounded')}">${value}</div>`;
+function makeArrForServices(value: string): string {
+  return `<div class="${JGC.customStyle?.toggles ? JGC.customStyle.toggles : checkTailwindPrefixes('bg-green-200')}
+  ${JGC.customStyle?.servicesTag ? JGC.customStyle.servicesTag : checkTailwindPrefixes('text-green-800')}
+  ${checkTailwindPrefixes('px-2 py-0.5 rounded')}">${value}</div>`;
 }
 
 /**
  * Generate panel
  */
-export function managePreferences() {
-  document.body.classList.add(checkTailwindPrefix('overflow-hidden'));
+export function managePreferences(): void {
+  document.body.classList.add(checkTailwindPrefixes('overflow-hidden'));
   closeBanner();
   const panelExists = document.querySelector('#preferenceDiv') != null;
   if (!panelExists) {
     const cookiePanel = document.createElement('div');
     cookiePanel.innerHTML = `
-    <div id="preferenceDiv" style="background-color: rgba(0,0,0,0.6);z-index:9999 !important;" class="${checkTailwindPrefix(
+    <div id="preferenceDiv" style="background-color: rgba(0,0,0,0.6);z-index:9999 !important;" class="${checkTailwindPrefixes(
       'w-full min-h-screen top-0 fixed flex flex-col p-6 shadow-2xl items-center justify-center mx-auto transition duration-700 ease-in-out',
     )} ${JGC.panelHeader ? '' : null} ">
-        ${JGC.panelHeader ? `<div id="jgc-custom-header" class="${checkTailwindPrefix('w-full')}"></div>` : ''}
+        ${JGC.panelHeader ? `<div id="jgc-custom-header" class="${checkTailwindPrefixes('w-full')}"></div>` : ''}
           <div class="${
             JGC.panel?.bgColor
               ? JGC.panel.bgColor
-              : `${JGC.customStyle?.preferenceDiv ? JGC.customStyle.preferenceDiv : checkTailwindPrefix('bg-white dark:bg-gray-800 max-w-3xl w-full')}`
-          } ${JGC.panel?.padding == false ? '' : `${checkTailwindPrefix('p-2')}`}">
-            <div class="${JGC.customStyle?.panelHeader ? JGC.customStyle.panelHeader : `${checkTailwindPrefix('md:flex justify-between px-4 py-4')}`}">
-              <h2 class="${JGC.customStyle?.panelTitle ? JGC.customStyle.panelTitle : checkTailwindPrefix('dark:text-gray-300 leading-snug text-xl font-bold m-0 p-0')}">
+              : `${JGC.customStyle?.preferenceDiv ? JGC.customStyle.preferenceDiv : checkTailwindPrefixes('bg-white dark:bg-gray-800 max-w-3xl w-full')}`
+          } ${JGC.panel?.padding == false ? '' : `${checkTailwindPrefixes('p-2')}`}">
+            <div class="${JGC.customStyle?.panelHeader ? JGC.customStyle.panelHeader : `${checkTailwindPrefixes('md:flex justify-between px-4 py-4')}`}">
+              <h2 class="${JGC.customStyle?.panelTitle ? JGC.customStyle.panelTitle : checkTailwindPrefixes('dark:text-gray-300 leading-snug text-xl font-bold m-0 p-0')}">
                 ${JGC.text?.panelTitle ? JGC.text.panelTitle : ''}
               </h2>
-              <div class="${checkTailwindPrefix('md:space-x-2 md:mt-0 mt-4 flex space-y-2 md:space-y-0 flex-col md:flex-row')}">
+              <div class="${checkTailwindPrefixes('md:space-x-2 md:mt-0 mt-4 flex space-y-2 md:space-y-0 flex-col md:flex-row')}">
                 <button role="button" id="closePreferencePanel" type="button" class="${
                   JGC.customStyle?.saveButton
                     ? JGC.customStyle.saveButton
-                    : `${checkTailwindPrefix(
+                    : `${checkTailwindPrefixes(
                         'px-3 py-1 uppercase font-bold tracking-wide text-xs z-index-10 relative rounded-md  focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer text-green-600 ring-1 ring-green-600',
                       )}`
                 } ">
@@ -233,7 +236,7 @@ export function managePreferences() {
                 <button role="button" id="closePreferencePanelAcceptAll" type="button" class="${
                   JGC.customStyle?.saveAllButton
                     ? JGC.customStyle.saveAllButton
-                    : `${checkTailwindPrefix(
+                    : `${checkTailwindPrefixes(
                         'px-3 py-1 uppercase font-bold tracking-wide text-xs z-index-10 relative rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer text-green-600 ring-1 ring-green-600',
                       )}`
                 }  ">
@@ -243,13 +246,13 @@ export function managePreferences() {
             </div>
             <div>
               <div style="overflow-y: scroll; -webkit-overflow-scrolling: touch; max-height: calc(100vh - 400px);" class="${
-                JGC.panel && JGC.panel.stripes ? `${JGC.panel.stripes.odd} ${JGC.panel.stripes.even}` : checkTailwindPrefix('space-y-4 overflow-y-auto')
-              } ${checkTailwindPrefix('text-sm py-4')}">
+                JGC.panel && JGC.panel.stripes ? `${JGC.panel.stripes.odd} ${JGC.panel.stripes.even}` : checkTailwindPrefixes('space-y-4 overflow-y-auto')
+              } ${checkTailwindPrefixes('text-sm py-4')}">
                 ${generateOptions()}
               </div>
             </div>
           </div>
-          ${JGC.panelFooter ? `<div id="jgc-custom-footer" class="${checkTailwindPrefix('w-full')}"></div>` : ''}
+          ${JGC.panelFooter ? `<div id="jgc-custom-footer" class="${checkTailwindPrefixes('w-full')}"></div>` : ''}
         </div>
     </div>
     `;
@@ -259,7 +262,7 @@ export function managePreferences() {
     document.getElementById('closePreferencePanel').addEventListener('click', () => closePreferencePanel());
     document.getElementById('closePreferencePanelAcceptAll').addEventListener('click', () => closePreferencePanelAndSaveAll());
   } else {
-    document.querySelector('#preferenceDiv').classList.remove(checkTailwindPrefix('hidden'));
+    document.querySelector('#preferenceDiv').classList.remove(checkTailwindPrefixes('hidden'));
   }
   changeToggle();
 }
@@ -267,36 +270,34 @@ export function managePreferences() {
 /**
  *  Add the click event to fire the settings panel
  */
-export function managePreferencesLinkListener() {
+export function managePreferencesLinkListener(): void {
   refreshLocalStorage();
-  const preferenceButton = document.getElementById('openPanel');
-  preferenceButton.addEventListener('click', () => managePreferences());
+  document.getElementById('openPanel').addEventListener('click', () => managePreferences());
 }
 
 /**
  * Fire the settings panel
  */
-export function managePreferencesLink(colors: any) {
+export function managePreferencesLink(colors: string): string {
   const createButton = document.createElement('div');
-  return (createButton.innerHTML = `
+  createButton.innerHTML = `
   <button id="openPanel" style=${JGC.customStyle?.preferencesText ? '' : 'font-size:0.6rem'} ;" class="${
-    colors ? colors : `${JGC.customStyle?.preferencesText ? JGC.customStyle.preferencesText : checkTailwindPrefix('font-bold uppercase dark:text-white')}`
+    colors ? colors : `${JGC.customStyle?.preferencesText ? JGC.customStyle.preferencesText : checkTailwindPrefixes('font-bold uppercase dark:text-white')}`
   }">
     ${JGC.text.preferencesText ?? 'Manage and choose cookies'}
-  </button>`);
+  </button>`;
+
+  return createButton.innerHTML;
 }
 
 /**
  * Open panel
  */
-export function openPanel() {
-  const getPreferences = getCookie('JgcPreferences');
-  const refreshed = getPreferences['refresh'];
-  if (refreshed == null && JGC.panel && JGC.panel.open) {
-    const banner = document.getElementById('bannerContent');
+export function openPanel(): void {
+  if (getCookie('JgcPreferences').refresh == null && JGC.panel?.open) {
     if (JGC.config.layout == 'style8') {
       // Style8 is a bit particular...
-      banner.remove();
+      document.getElementById('bannerContent').remove();
       setTimeout(() => {
         managePreferences();
       }, 200);
@@ -309,67 +310,59 @@ export function openPanel() {
 /**
  * Return services
  */
-function returnServices(service: any) {
-  const getElementsJgc = document.querySelectorAll(`[data-jgc-tag="${service}"]`);
-  let arr: any = [];
-  let divsToReturn: any = [];
-  const checkPreferences = getCookie('JgcPreferences');
+function returnServices(service: string): string {
+  let arr = '';
   let check = undefined;
-  if (getElementsJgc) {
-    for (let index = 0; index < getElementsJgc.length; index++) {
-      const element = getElementsJgc[index];
-      const getService = element.getAttribute('data-jgc-service') ? (element.getAttribute('data-jgc-service') as any).escape() : null;
-      if (getService) {
-        if (element.hasAttribute('data-jgc-remove')) check = true;
-        arr += makeArrForServices(getService);
-      }
-    }
-  }
 
-  if (checkPreferences['servicesRemoved']?.length > 0 && !checkPreferences['duration']) {
-    if (!check) {
-      for (let index = 0; index < checkPreferences['servicesRemoved'].length; index++) {
-        const element = checkPreferences['servicesRemoved'][index];
-        const getService = element['service'];
-        const getTag = element['tag'];
-        if (getTag == service) arr += makeArrForServices(getService);
+  document.querySelectorAll(`[data-jgc-tag="${service}"]`)?.forEach(element => {
+    const getService = element.getAttribute('data-jgc-service') ? (element.getAttribute('data-jgc-service') as any).escape() : null;
+    if (getService) {
+      if (element.hasAttribute('data-jgc-remove')) {
+        check = true;
       }
+      arr += makeArrForServices(getService);
     }
+  });
+
+  const checkPreferences = getCookie('JgcPreferences');
+  if (!check && checkPreferences.servicesRemoved?.length > 0 && !checkPreferences.duration) {
+    checkPreferences.servicesRemoved.forEach(serviceRemoved => {
+      if (serviceRemoved.tag == service) {
+        arr += makeArrForServices(serviceRemoved.service);
+      }
+    });
   }
 
   if (JGC.auto) {
-    const objKeys = Object.values(JGC.autoCategories);
-    objKeys.forEach((el: any, k: any) => {
-      if (service == el[1]) arr += makeArrForServices(el[0]);
+    Object.values(JGC.autoCategories).forEach(element => {
+      if (service == element[1]) {
+        arr += makeArrForServices(element[0]);
+      }
     });
   }
 
   if (JGC.activate) {
-    const objEntries = Object.entries(JGC.activate);
-    for (let i = 0; i < objEntries.length; i++) {
-      const element = objEntries[i];
+    Object.entries(JGC.activate).forEach(element => {
       if (element[1].dataJgcService && service == element[1].dataJgcTag) {
         arr += makeArrForServices(element[1].dataJgcService);
       }
-    }
+    });
   }
 
-  divsToReturn += `<div class="${arr.length > 0 ? checkTailwindPrefix('mt-2 border-t') : ''}">
-    ${arr.length > 0 ? `<h4 class="${checkTailwindPrefix('text-xs mt-1')} ${JGC.customStyle?.servicesText ?? ''}">${JGC.text.servicesTag}</h4>` : ''}
-    <div class="${checkTailwindPrefix('flex space-x-1 mt-2 text-xs font-semibold')}">${arr}</div>
+  return `<div class="${arr.length > 0 ? checkTailwindPrefixes('mt-2 border-t') : ''}">
+    ${arr.length > 0 ? `<h4 class="${checkTailwindPrefixes('text-xs mt-1')} ${JGC.customStyle?.servicesText ?? ''}">${JGC.text.servicesTag}</h4>` : ''}
+    <div class="${checkTailwindPrefixes('flex space-x-1 mt-2 text-xs font-semibold')}">${arr}</div>
     </div>`;
-  return divsToReturn;
 }
 
 /**
  * Grab the custom tags and write an item to local storage
  */
-export function setPreferences() {
-  const preferences = {};
-  for (const [k, v] of Object.entries(JGC.getCustomCookies)) {
-    preferences[k] = true;
-  }
-  const getPreferences = getCookie('JgcPreferences');
-  const saveObj = { ...getPreferences, preferences };
-  saveCookie(saveObj);
+export function setPreferences(): void {
+  const preferences: GetCustomCookies = {};
+
+  Object.keys(JGC.getCustomCookies).forEach(key => {
+    preferences[key] = true;
+  });
+  saveCookie({ ...getCookie('JgcPreferences'), preferences });
 }

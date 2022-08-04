@@ -8,7 +8,7 @@
  */
 import JGC from './justgoodcookies';
 import { getCookie, saveCookie } from './cookies';
-import { checkTailwindPrefix } from './utilities';
+import { checkTailwindPrefixes } from './utilities';
 import { generateIframeDivs } from './placeholders';
 
 /**
@@ -28,7 +28,7 @@ export function autoMode(arrToActivate?: any): void {
               if (element.tagName == 'IFRAME') generateIframeDivs(element);
               removeElements(element);
             } else {
-              element.classList.remove(checkTailwindPrefix('hidden'));
+              element.classList.remove(checkTailwindPrefixes('hidden'));
             }
           }
         }
@@ -49,7 +49,7 @@ export function autoMode(arrToActivate?: any): void {
         const src = (element as any).src || (element.tagName == 'LINK' ? element.getAttribute('href') : undefined);
         if (src) {
           if (!element.getAttribute('data-jgc-tag')) {
-            element.classList.remove(checkTailwindPrefix('hidden'));
+            element.classList.remove(checkTailwindPrefixes('hidden'));
             if (
               objKeys.some(v => {
                 if (src && src.includes(v)) {

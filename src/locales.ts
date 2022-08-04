@@ -6,6 +6,24 @@
  *
  * This project is a fork of the original just-good-cookies project of Francesco Mugnai.
  */
+export type Locale = {
+  acceptText: string;
+  acceptSelectedShortText: string;
+  acceptSelectedText: string;
+  acceptShortText: string;
+  bannerDescription: string;
+  bannerShortDescription: string;
+  bannerLinkLabel: string;
+  bannerLinkDescription: string;
+  panelTitle: string;
+  preferencesText: string;
+  rejectShortText: string;
+  rejectText: string;
+  saveAndContinue: string;
+  saveAndContinueAcceptAll: string;
+  servicesText: string;
+};
+
 export const locales = {
   de: {
     acceptText: 'Cookies akzeptieren',
@@ -14,7 +32,7 @@ export const locales = {
     acceptShortText: 'Akzeptieren',
     bannerDescription: `
       Wir verwenden Cookies, um Inhalte zu personalisieren, die Benutzerfreundlichkeit zu verbessern und unseren Datenverkehr zu analysieren.
-      Wenn Sie auf "Akzeptieren" klicken, erklären Sie sich mit der Verwendung aller Cookies einverstanden. 
+      Wenn Sie auf "Akzeptieren" klicken, erklären Sie sich mit der Verwendung aller Cookies einverstanden.
       Sie können Ihre Einstellungen jederzeit ändern, indem Sie die Cookie-Einstellungen besuchen.
     `,
     bannerShortDescription: 'Diese Website verwendet Cookies.',
@@ -35,7 +53,7 @@ export const locales = {
     acceptShortText: 'Accepter',
     bannerDescription: `
       Nous utilisons des cookies pour personnaliser le contenu, améliorer l'expérience utilisateur et analyser notre trafic.
-      En cliquant sur "Accepter", vous consentez à l'utilisation de tous les cookies. 
+      En cliquant sur "Accepter", vous consentez à l'utilisation de tous les cookies.
       Vous pouvez modifier vos paramètres à tout moment en vous rendant dans les préférences relatives aux cookies.
     `,
     bannerShortDescription: 'Ce site web utilise des cookies.',
@@ -56,7 +74,7 @@ export const locales = {
     acceptShortText: 'Accept',
     bannerDescription: `
       We use cookies to personalize content, improve user experience, and analyze our traffic.
-      By clicking “Accept,” you consent to the use of all the cookies. 
+      By clicking “Accept,” you consent to the use of all the cookies.
       You may change your settings at any time by visiting the Cookie preferences.
     `,
     bannerShortDescription: 'This website uses cookies.',
@@ -77,7 +95,7 @@ export const locales = {
     acceptShortText: 'Aceptar',
     bannerDescription: `
       En nuestro sitio utilizamos cookies para personalizar el contenido, mejorar la experiencia del usuario y analizar nuestro tráfico.
-      Al hacer clic en "Aceptar", usted consiente el uso de todas las cookies. 
+      Al hacer clic en "Aceptar", usted consiente el uso de todas las cookies.
       Puede cambiar la configuración en cualquier momento visitando las preferencias de cookies.
     `,
     bannerShortDescription: 'Este sitio web utiliza cookies.',
@@ -97,8 +115,8 @@ export const locales = {
     acceptSelectedText: 'Accetto la selezione',
     acceptShortText: 'Accetto',
     bannerDescription: `
-      Utilizziamo cookie nostri e di terze parti per personalizzare il contenuto e analizzare il traffico web. 
-      Puoi prestare, rifiutare o revocare il tuo consenso, in qualsiasi momento, aprendo il pannello delle preferenze.  
+      Utilizziamo cookie nostri e di terze parti per personalizzare il contenuto e analizzare il traffico web.
+      Puoi prestare, rifiutare o revocare il tuo consenso, in qualsiasi momento, aprendo il pannello delle preferenze.
       Chiudendo questa informativa, continui senza accettare.
     `,
     bannerLinkLabel: 'privacy policy',

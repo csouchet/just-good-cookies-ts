@@ -10,125 +10,252 @@
 import { googleTagManager, checkActivations } from './activate';
 import { autoMode, generatePreferenceStorage, checkCookiesAutoMode } from './autoMode';
 import { showBanner, closeBanner } from './banner';
+import type { CookieType, GetCustomCookies } from './cookies';
 import { getCookie, getCookieId, getCookiePreferences, saveCookie, checkCookieExpiration, saveCookiesPreferences } from './cookies';
+import type { Locale } from './locales';
 import { locales } from './locales';
 import { activateToggledCookies, hideScripts, removeScript, removeDivsOfUserAcceptedIframes, checkGoogleAnalytics } from './scripts';
 import { loadBannerLayout } from './styles';
 import { removePlaceholders } from './placeholders';
 import { closePreferencePanel, closePreferencePanelAndSaveAll, setPreferences, loadPreferences, openPanel } from './preferences';
-import { isString, isFunction, checkTailwindPrefix, checkDarkMode, checkBackground, loadText } from './utilities';
+import { isString, checkTailwindPrefixes, checkDarkMode, checkBackground, loadText } from './utilities';
 
-export type Activate = { GoogleAnalytics: any; FacebookPixel: any; GoogleTagManager: { variables: any[][]; event_name: any[]; container_id: string } };
+export type Activate = {
+  GoogleAnalytics: { dataJgcTag: string; dataJgcService: string };
+  FacebookPixel: { dataJgcTag: string; dataJgcService: string };
+  GoogleTagManager: { dataJgcTag: string; dataJgcService: string; variables: string[][]; event_name: string[]; container_id: string };
+};
+
+type Text = {
+  acceptSelectedText: string;
+  acceptText: string;
+  bannerLinkLabel: string;
+  descriptionText: string;
+  panelTitle: string;
+  preferencesText: string;
+  rejectText: string;
+  saveButton: string;
+  saveAllButton: string;
+  servicesTag: string;
+};
+type BannerMaxWidth = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full' | 'min' | 'max';
+type Placeholder = { text: string; image: string; classes: string };
+type Panel = {
+  stripes: {
+    even: string;
+    odd: string;
+  };
+  padding: boolean;
+  bgColor: null;
+  open: boolean;
+};
+type Banner = {
+  animation: boolean;
+  backgroundColor: string;
+  backgroundDark: boolean;
+  backgroundImage: string;
+  closeButton: boolean;
+  closeButtonAccept: boolean;
+  disableReject: boolean;
+  innerBackgroundImage: string;
+  icon: string;
+  iconDark: boolean;
+  logo: string;
+  logoClasses: string;
+  maxWidth: BannerMaxWidth;
+  onAccept: () => void;
+  onReject: () => void;
+  position: string;
+  shortText: string;
+  title: string;
+};
+type Style = {
+  services: string;
+  accept: string;
+  bannerText: string;
+  bannerTitle: string;
+  closeButton: () => void;
+  toggles: string;
+  lockIcon: string;
+  panelHeader: string;
+  panelTitle: string;
+  panelText: string;
+  preferenceDiv: string;
+  preferencesText: string;
+  privacyLink: string;
+  reject: string;
+  saveButton: string;
+  stripes: string;
+  servicesTag: string;
+  servicesText: string;
+  saveAllButton: string;
+};
 
 interface Data {
   activate: Activate;
-  panel: {
-    bgColor: any;
-    open: boolean;
-    padding: boolean;
-  };
-  cookies: any;
-  style: {
-    accept: any;
-    bannerText: any;
-    bannerTitle: any;
-    closeButton: any;
-    toggles: any;
-    lockIcon: any;
-    panelHeader: any;
-    panelTitle: any;
-    panelText: any;
-    preferenceDiv: any;
-    preferencesText: any;
-    privacyLink: any;
-    reject: any;
-    saveButton: any;
-    stripes: any;
-    servicesTag: any;
-    servicesText: any;
-    saveAllButton: any;
-  };
-  banner: {
-    animation: boolean;
-    backgroundColor: any;
-    backgroundDark: boolean;
-    backgroundImage: any;
-    closeButtonAccept: boolean;
-    disableReject: boolean;
-    icon: any;
-    iconDark: any;
-    innerBackgroundImage: any;
-    logo: any;
-    logoClasses: any;
-    maxWidth: any;
-    onAccept: any;
-    onReject: any;
-    position: any;
-    shortText: boolean;
-    title: any;
-    closeButton: any;
-  };
-  privacyLink: any;
-  text: any;
-  cookieDuration: any;
-  layout: any;
-  tailwindPrefix: any;
-  dark: any;
-  placeholder: any;
-  locale: any;
-  autoCategories: any;
+  panel: Panel;
+  cookies: GetCustomCookies;
+  style: Style;
+  banner: Banner;
+  privacyLink: string;
+  text: Text;
+  cookieDuration: number;
+  layout: string;
+  tailwindPrefix: string;
+  dark: boolean;
+  placeholder: Placeholder;
+  locale: 'en' | 'fr' | 'de' | 'es' | 'it';
+  autoCategories: string;
   autoMode: boolean;
 }
 
 class JustGoodCookies {
-  acceptText: boolean;
+  acceptText: string;
   activate: Activate;
   auto: boolean;
-  autoCategories: any;
-  banner: any;
-  bannerConfig: any;
+  autoCategories: string;
+  banner: string;
+  bannerConfig?: Banner;
   bannerLink: string;
   bannerText: string;
-  config: any;
-  cookieTimeout: any;
-  customStyle: any;
-  darkMode: any;
-  getCookieId: any;
-  getCookiePreferences: any;
-  getCustomCookies: any;
-  locale: any;
-  localeString: string;
-  locales: any;
-  onAccept: () => any;
-  onReject: () => any;
-  panel: any;
-  panelFooter: any;
-  panelHeader: any;
-  placeholder: any;
-  positions: object;
-  tailwindPrefix: any;
-  text: {
-    acceptSelectedText: string;
-    acceptText: string;
-    bannerLinkLabel: string;
-    descriptionText: string;
-    panelTitle: string;
-    preferencesText: string;
-    rejectText: string;
-    saveButton: string;
-    saveAllButton: string;
-    servicesTag: string;
+  config: {
+    locale: 'en' | 'fr' | 'de' | 'es' | 'it';
+    layout: string;
+    privacyLink: string;
   };
+  cookieTimeout: number;
+  customStyle: Style;
+  darkMode: boolean;
+  getCookieId: (name: CookieType) => void;
+  getCookiePreferences: (name: CookieType) => void;
+  getCustomCookies: GetCustomCookies;
+  locale: Locale;
+  localeString: 'en' | 'fr' | 'de' | 'es' | 'it';
+  locales: {
+    de: {
+      acceptSelectedText: string;
+      bannerShortDescription: string;
+      acceptText: string;
+      servicesText: string;
+      bannerLinkLabel: string;
+      rejectText: string;
+      preferencesText: string;
+      bannerLinkDescription: string;
+      acceptShortText: string;
+      saveAndContinueAcceptAll: string;
+      panelTitle: string;
+      acceptSelectedShortText: string;
+      bannerDescription: string;
+      saveAndContinue: string;
+      rejectShortText: string;
+    };
+    en: {
+      acceptSelectedText: string;
+      bannerShortDescription: string;
+      acceptText: string;
+      servicesText: string;
+      bannerLinkLabel: string;
+      rejectText: string;
+      preferencesText: string;
+      bannerLinkDescription: string;
+      acceptShortText: string;
+      saveAndContinueAcceptAll: string;
+      panelTitle: string;
+      acceptSelectedShortText: string;
+      bannerDescription: string;
+      saveAndContinue: string;
+      rejectShortText: string;
+    };
+    it: {
+      acceptSelectedText: string;
+      bannerShortDescription: string;
+      acceptText: string;
+      servicesText: string;
+      bannerLinkLabel: string;
+      rejectText: string;
+      preferencesText: string;
+      bannerLinkDescription: string;
+      acceptShortText: string;
+      saveAndContinueAcceptAll: string;
+      panelTitle: string;
+      acceptSelectedShortText: string;
+      bannerDescription: string;
+      saveAndContinue: string;
+      rejectShortText: string;
+    };
+    fr: {
+      acceptSelectedText: string;
+      bannerShortDescription: string;
+      acceptText: string;
+      servicesText: string;
+      bannerLinkLabel: string;
+      rejectText: string;
+      preferencesText: string;
+      bannerLinkDescription: string;
+      acceptShortText: string;
+      saveAndContinueAcceptAll: string;
+      panelTitle: string;
+      acceptSelectedShortText: string;
+      bannerDescription: string;
+      saveAndContinue: string;
+      rejectShortText: string;
+    };
+    es: {
+      acceptSelectedText: string;
+      bannerShortDescription: string;
+      acceptText: string;
+      servicesText: string;
+      bannerLinkLabel: string;
+      rejectText: string;
+      preferencesText: string;
+      bannerLinkDescription: string;
+      acceptShortText: string;
+      saveAndContinueAcceptAll: string;
+      panelTitle: string;
+      acceptSelectedShortText: string;
+      bannerDescription: string;
+      saveAndContinue: string;
+      rejectShortText: string;
+    };
+  };
+  onAccept: () => void;
+  onReject: () => void;
+  panel: Panel;
+  panelFooter: string;
+  panelHeader: string;
+  placeholder: Placeholder;
+  positions: string;
+  tailwindPrefix: string;
+  text: Text;
 
   constructor() {
-    this.activate = undefined; // Custom Activations
+    this.activate = null; // Custom Activations
     this.auto = false; // autoMode
     this.autoCategories = undefined; // Categories for autoMode
     this.banner = undefined; // Banner div
-    this.bannerConfig = undefined; // Banner config
+    this.bannerConfig = {
+      animation: true,
+      backgroundColor: checkTailwindPrefixes('bg-white dark:bg-gray-800'),
+      backgroundDark: false,
+      backgroundImage: null,
+      closeButton: true,
+      closeButtonAccept: false,
+      disableReject: false,
+      icon: null,
+      iconDark: null,
+      innerBackgroundImage: null,
+      logo: undefined,
+      logoClasses: undefined,
+      maxWidth: undefined,
+      onAccept: null,
+      onReject: null,
+      position: undefined,
+      shortText: this.acceptText,
+      title: 'Cookies',
+    }; // Banner config
     this.bannerLink = undefined; // Privacy policy link
     this.bannerText = undefined; // Custom banner text
-    this.cookieTimeout = undefined; // Default cookie duration (360 days)
+    this.cookieTimeout = 360; // Default cookie duration (360 days)
     this.config = undefined; // General config
     this.customStyle = undefined; // Banner style
     this.darkMode = undefined; // Force dark mode
@@ -137,8 +264,8 @@ class JustGoodCookies {
     this.localeString = undefined; // Lang string
     this.onAccept = undefined; // Callback on "accept"
     this.onReject = undefined; // Callback on "reject"
-    this.panel = undefined; // Preference panel
-    this.positions = {}; // Banner positions
+    this.panel = { bgColor: null, open: false, padding: false }; // Preference panel
+    this.positions = ''; // Banner positions
     this.panelFooter = undefined; // "Footer"
     this.panelHeader = undefined; // "Header"
     this.placeholder = undefined; // Placeholder
@@ -146,15 +273,7 @@ class JustGoodCookies {
     this.text = undefined; // Custom texts
 
     this.getCookieId = getCookieId;
-    this.getCookiePreferences = getCookiePreferences(String.prototype).escape = function () {
-      const replace = {
-        '>': '&gt;',
-        '<': '&lt;',
-        '&': '&amp;',
-      };
-      // @ts-expect-error TS(7006): Parameter 'tag' implicitly has an 'any' type.
-      return this.replace(/[&<>]/g, tag => replace[tag] || tag);
-    };
+    this.getCookiePreferences = getCookiePreferences;
   }
 
   /*
@@ -163,18 +282,19 @@ class JustGoodCookies {
   checkCookies(): void {
     const preference = getCookie('JgcPreferences');
     if (preference.duration) {
-      const getValue = preference.duration.value;
-      switch (getValue) {
+      switch (preference.duration.value) {
         case '0': // Cookies rejected :(
-          if (this.auto) autoMode();
+          if (this.auto) {
+            autoMode();
+          }
           checkCookieExpiration(); // Check if cookie is expired
           hideScripts(); // Hide the scripts
           break;
         case '1': // Cookies accepted :)
-          bannerContent.classList.add(checkTailwindPrefix('hidden'));
+          bannerContent.classList.add(checkTailwindPrefixes('hidden'));
           checkCookiesAutoMode(); // Check if we are running the autoMode
           removePlaceholders(); // Remove placeholders
-          removeDivsOfUserAcceptedIframes(); // Remove hidden divs (if any) for accepted cookies
+          removeDivsOfUserAcceptedIframes(); // Remove hidden divs (if string) for accepted cookies
           checkCookieExpiration(); // Check if the cookie is expired
           checkActivations(); // Check if we need to activate some pre-built scripts
           checkGoogleAnalytics(); // Check Google Analytics
@@ -185,7 +305,9 @@ class JustGoodCookies {
       }
     } else {
       // The banner has not been accepted yet, let's turn off all scripts and show the banner
-      if (this.auto) autoMode();
+      if (this.auto) {
+        autoMode();
+      }
       hideScripts();
       showBanner();
     }
@@ -229,147 +351,92 @@ class JustGoodCookies {
   /**
    * Activate the JGC engine and all the main functions
    */
-  init(data: Data) {
-    data ? data : {};
-
+  init(data: Data = {} as Data): void {
     // Initialize the language
     if (data.locale) {
       this.locales = locales;
-      this.locale = this.locales[data.locale.escape()] || this.locales['en'];
+      this.locale = this.locales[data.locale] || this.locales.en;
       this.localeString = data.locale;
     }
 
     // Check if the autoMode is active or not
     if (data.autoMode) {
-      const checkPreferences = getCookie('JgcPreferences');
-      if (!checkPreferences) {
-        const scripts = document.querySelectorAll('iframe,script');
-        for (const element of scripts) element.classList.add(checkTailwindPrefix('hidden'));
+      if (!getCookie('JgcPreferences')) {
+        document.querySelectorAll('iframe,script').forEach(element => element.classList.add(checkTailwindPrefixes('hidden')));
       }
       this.auto = true;
       if (data.autoCategories) {
-        for (const a of Object.keys(data.autoCategories)) {
-          data.autoCategories[a][0] = data.autoCategories[a][0].escape();
-          data.autoCategories[a][1] = data.autoCategories[a][1].escape();
-        }
+        Object.keys(data.autoCategories).forEach(key => {
+          data.autoCategories[key][0] = data.autoCategories[key][0].escape();
+          data.autoCategories[key][1] = data.autoCategories[key][1].escape();
+        });
         this.autoCategories = data.autoCategories;
       }
     }
 
     // General config
     this.config = {
-      locale: data.locale !== undefined ? data.locale.escape() : new Languages('en'),
-      layout: data.layout.escape() || 'style1',
-      privacyLink: data.privacyLink.escape() || '',
+      locale: data.locale ? data.locale : 'en',
+      layout: escape(data.layout) || 'style1',
+      privacyLink: escape(data.privacyLink) || '',
     };
 
     // Cookie duration
-    this.cookieTimeout = data.cookieDuration ? data.cookieDuration : 360;
+    data.cookieDuration && (this.cookieTimeout = data.cookieDuration);
 
     // Tailwind Prefix
-    if (data.tailwindPrefix) {
-      this.tailwindPrefix = data.tailwindPrefix;
-    }
+    data.tailwindPrefix && (this.tailwindPrefix = data.tailwindPrefix);
 
     // Automatic Dark Mode
-    if (data.dark) {
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        const htmlClass = document.querySelector('html');
-        htmlClass.classList.add(checkTailwindPrefix('dark'));
-        this.darkMode = true;
-      }
+    if (data.dark && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      const htmlClass = document.querySelector('html');
+      htmlClass.classList.add(checkTailwindPrefixes('dark'));
+      this.darkMode = true;
     }
 
     // Custom texts
-    this.text = {
-      acceptSelectedText: data.text?.acceptSelectedText ? isString(data.text.acceptSelectedText, 'acceptSelectedText') : this.locale.acceptSelectedText,
-      acceptText: data.text?.acceptText ? isString(data.text.acceptText, 'acceptText') : this.locale.acceptText,
-      bannerLinkLabel: data.text?.bannerLinkLabel ? isString(data.text.bannerLinkLabel, 'bannerLinkLabel') : this.locale.bannerLinkLabel,
-      descriptionText: data.text?.descriptionText ? isString(data.text.descriptionText, 'descriptionText') : null,
-      panelTitle: data.text?.panelTitle ? isString(data.text.panelTitle, 'panelTitle') : this.locale.panelTitle,
-      preferencesText: data.text?.preferencesText ? isString(data.text.preferencesText, 'preferencesText') : this.locale.preferencesText,
-      rejectText: data.text?.rejectText ? isString(data.text.rejectText, 'rejectText') : this.locale.rejectText,
-      saveButton: data.text?.saveButton ? isString(data.text.saveButton, 'saveButton') : this.locale.saveAndContinue,
-      saveAllButton: data.text?.saveAllButton ? isString(data.text.saveAllButton, 'saveAllButton') : this.locale.saveAndContinueAcceptAll,
-      servicesTag: data.text?.servicesTag ? isString(data.text.servicesTag, 'servicesTag') : this.locale.servicesText,
-    };
+    const text = data.text;
+    this.text = text
+      ? text
+      : {
+          ...this.locale,
+          descriptionText: null,
+          saveButton: this.locale.saveAndContinue,
+          saveAllButton: this.locale.saveAndContinueAcceptAll,
+          servicesTag: this.locale.servicesText,
+        };
 
     // Banner config & style
-    this.bannerConfig = {
-      animation: data.banner?.animation ? data.banner.animation : true,
-      backgroundColor: data.banner?.backgroundColor ? isString(data.banner.backgroundColor, 'backgroundColor') : checkTailwindPrefix('bg-white dark:bg-gray-800'),
-      backgroundDark: data.banner?.backgroundDark ? data.banner.backgroundDark : false,
-      backgroundImage: data.banner?.backgroundImage ? isString(data.banner.backgroundImage, 'backgroundImage') : null,
-      closeButton: data.banner?.closeButton ? data.banner.closeButton : true,
-      closeButtonAccept: data.banner?.closeButtonAccept ? data.banner.closeButtonAccept : false,
-      disableReject: data.banner?.disableReject ? data.banner.disableReject : false,
-      icon: data.banner?.icon ? isString(data.banner.icon, 'icon') : null,
-      iconDark: data.banner?.iconDark ? isString(data.banner.iconDark, 'iconDark') : null,
-      innerBackgroundImage: data.banner?.innerBackgroundImage ? isString(data.banner.innerBackgroundImage, 'innerBackgroundImage') : null,
-      logo: data.banner?.logo ? isString(data.banner.logo, 'logo') : undefined,
-      logoClasses: data.banner?.logoClasses ? isString(data.banner.logoClasses, 'logoClasses') : undefined,
-      maxWidth: data.banner?.maxWidth ? isString(data.banner.maxWidth, 'maxWidth') : undefined,
-      onAccept: data.banner?.onAccept ? (this.onAccept = isFunction(data.banner.onAccept, 'onAccept')) : null,
-      onReject: data.banner?.onReject ? (this.onReject = isFunction(data.banner.onReject, 'onReject')) : null,
-      position: data.banner?.position ? isString(data.banner.position, 'position') : undefined,
-      shortText: data.banner?.shortText && data.banner.shortText ? this.locale.acceptShortText : this.acceptText,
-      title: data.banner?.title ? isString(data.banner.title, 'title') : 'Cookies',
-    };
+    if (data.banner) {
+      this.bannerConfig = {
+        ...data.banner,
+        shortText: this.locale.acceptShortText,
+      };
+      this.onAccept = data.banner.onAccept;
+      this.onReject = data.banner.onReject;
+    }
 
     // Custom text placeholder
-    if (data.placeholder) {
-      this.placeholder = {
-        classes: data.placeholder?.classes && isString(data.placeholder.classes, 'placeholder classes'),
-        image: data.placeholder?.image && isString(data.placeholder.image, 'placeholder image'),
-        text: data.placeholder?.text && isString(data.placeholder.text, 'placeholder text'),
-      };
-    }
+    data.placeholder && (this.placeholder = data.placeholder);
 
     // Preference Panel
-    if (data.panel) {
-      this.panel = {
-        bgColor: data.panel?.bgColor ? isString(data.panel.bgColor, 'bgColor') : null,
-        open: data.panel?.open ? data.panel.open : false,
-        padding: data.panel?.padding ? data.panel.padding : false,
-      };
-    }
+    data.panel && (this.panel = data.panel);
 
     // Banner style
-    if (data.style) {
-      this.customStyle = {
-        accept: data.style?.accept ? isString(data.style.accept, 'accept') : null,
-        bannerText: data.style?.bannerText ? isString(data.style.bannerText, 'bannerText') : null,
-        bannerTitle: data.style?.bannerTitle ? isString(data.style.bannerTitle, 'bannerTitle') : null,
-        closeButton: data.style?.closeButton ? isString(data.style.closeButton, 'closeButton') : null,
-        toggles: data.style?.toggles ? isString(data.style.toggles, 'toggles') : null,
-        lockIcon: data.style?.lockIcon ? isString(data.style.lockIcon, 'lockIcon') : null,
-        panelHeader: data.style?.panelHeader ? isString(data.style.panelHeader, 'panelHeader') : null,
-        panelText: data.style?.panelText ? isString(data.style.panelText, 'panelText') : null,
-        panelTitle: data.style?.panelTitle ? isString(data.style.panelTitle, 'panelTitle') : null,
-        preferenceDiv: data.style?.preferenceDiv ? isString(data.style.preferenceDiv, 'preferenceDiv') : null,
-        preferencesText: data.style?.preferencesText ? isString(data.style.preferencesText, 'preferencesText') : null,
-        privacyLink: data.style?.privacyLink ? isString(data.style.privacyLink, 'privacyLink') : null,
-        reject: data.style?.reject ? isString(data.style.reject, 'reject') : null,
-        saveButton: data.style?.saveButton ? isString(data.style.saveButton, 'classes') : null,
-        saveAllButton: data.style?.saveAllButton ? isString(data.style.saveAllButton, 'classes') : null,
-        servicesText: data.style?.servicesText ? isString(data.style.servicesText, 'servicesText') : null,
-        servicesTag: data.style?.servicesTag ? isString(data.style.servicesTag, 'servicesTag') : null,
-        stripes: data.style?.stripes ? isString(data.style.stripes, 'stripes: classes') : null,
-      };
-    }
+    this.customStyle = data.style;
 
     // Cookie Categories
     if (data.cookies) {
-      this.getCustomCookies = {};
-      for (const jgcTag of Object.keys(data.cookies)) {
-        // @ts-expect-error TS(2550): Property 'entries' does not exist on type 'ObjectC... Remove this comment to see the full error message
-        for (const [objKey] of Object.entries(data.cookies[jgcTag])) data.cookies[jgcTag][objKey] = isString(data.cookies[jgcTag][objKey]);
-      }
+      Object.keys(data.cookies).forEach(jgcTag => {
+        Object.entries(data.cookies[jgcTag]).forEach(([objKey]) => {
+          data.cookies[jgcTag][objKey] = isString(data.cookies[jgcTag][objKey]);
+        });
+      });
       this.getCustomCookies = data.cookies;
     }
 
     // Activations
-    this.activate = data.activate ? data.activate : null;
+    data.activate && (this.activate = data.activate);
 
     // Let's start the engine
     if (document.readyState == 'complete' || document.readyState == 'loading') {
