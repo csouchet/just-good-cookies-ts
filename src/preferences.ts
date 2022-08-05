@@ -92,7 +92,7 @@ export function closePreferencePanel(): void {
     ...getCookie('JgcPreferences'),
     preferences: JSON.parse(localStorage.getItem('JgcPreferences')),
     duration: {
-      value: '1',
+      valid: '1',
       expiry: date.toString(),
     },
   });

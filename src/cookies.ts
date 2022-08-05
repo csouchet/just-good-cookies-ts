@@ -9,14 +9,17 @@
 import JGC from './justgoodcookies';
 import { showBanner } from './banner';
 
-export type GetCustomCookies = { [key: string]: boolean };
+export interface Preferences {
+  necessary: boolean;
+  [key: string]: boolean;
+}
 
 interface Cookie {
   refresh?: boolean;
   remove?: boolean | number;
   darkBackground?: boolean;
-  duration?: { expiry: string; value: string };
-  preferences?: GetCustomCookies;
+  duration?: { expiry: string; valid: boolean };
+  preferences?: Preferences;
   id?: string;
   servicesRemoved?: {
     service: string;
@@ -36,10 +39,10 @@ export function checkCookieExpiration(value?: string): void {
   date.setTime(date.getTime() + JGC.cookieTimeout * 24 * 60 * 60 * 1000);
 
   if (!cookie.duration) {
-    saveCookie({ ...cookie, duration: { value, expiry: date.toString() }, id: Date.now() + Math.random().toString(16).slice(2) });
+    saveCookie({ ...cookie, duration: { valid: value, expiry: date.toString() }, id: Date.now() + Math.random().toString(16).slice(2) });
   } else if (new Date().setHours(0, 0, 0, 0) >= new Date(cookie.duration.expiry).setHours(0, 0, 0, 0)) {
     delete cookie.duration;
-    saveCookie({ ...cookie, duration: { value: '1', expiry: date.toString() } });
+    saveCookie({ ...cookie, duration: { valid: '1', expiry: date.toString() } });
     showBanner();
   }
 }
@@ -49,8 +52,8 @@ export function checkCookieExpiration(value?: string): void {
  */
 export function getCookie(name: CookieType): Cookie {
   const cookie: Cookie = {};
-  document.cookie.split(';').forEach(function (el) {
-    const [k, v] = el.split('=');
+  document.cookie.split(';').forEach(element => {
+    const [k, v] = element.split('=');
     cookie[k.trim()] = v;
   });
   return cookie[name] ? JSON.parse(cookie[name]) : null;
@@ -59,25 +62,15 @@ export function getCookie(name: CookieType): Cookie {
 /**
  * Get cookie preferences (useful for the callbacks from the frontend)
  */
-export function getCookieId(name: CookieType): void {
-  const cookie: Cookie = {};
-  document.cookie.split(';').forEach(function (el) {
-    const [k, v] = el.split('=');
-    cookie[k.trim()] = v;
-  });
-  return cookie[name] ? JSON.parse(cookie[name]).id : null;
+export function getCookieId(name: CookieType): string | undefined {
+  return getCookie(name)?.id;
 }
 
 /**
  * Get cookie (useful for a callback from the frontend)
  */
-export function getCookiePreferences(name: CookieType): void {
-  const cookie: Cookie = {};
-  document.cookie.split(';').forEach(function (el) {
-    const [k, v] = el.split('=');
-    cookie[k.trim()] = v;
-  });
-  return cookie[name] ? JSON.parse(cookie[name]).preferences : null;
+export function getCookiePreferences(name: CookieType): Preferences | undefined {
+  return getCookie(name)?.preferences;
 }
 
 /**

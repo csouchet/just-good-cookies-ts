@@ -16,7 +16,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "typeRoots": [
-      "node_modules/@types",
+      "node_modules/@types", "src/types"
     ],
     "stripInternal": true,
     "noImplicitOverride": true,
