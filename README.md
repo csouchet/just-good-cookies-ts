@@ -1,13 +1,49 @@
-# Just Good Cookies - TypeScript version with MaterialUI (JGC-TS)
+<h1 align="center">Just Good Cookies - TypeScript version with MaterialUI (JGC-TS)</h1>
+<div align="center">
+    <p align="center"> <img title="Just Good Cookies - TypeScript" src="images/jgc.jpg" alt="Just Good Cookies - TypeScript example"></p>
+    <p align="center"> 
+        <a href="https://npmjs.org/package/just-good-cookies-ts">
+          <img alt="npm package" src="https://img.shields.io/npm/v/just-good-cookies-ts.svg?color=orange"> 
+        </a> 
+        <a href="https://bundlephobia.com/package/just-good-cookies-ts">
+          <img alt="npm bundle size" src="https://img.shields.io/bundlephobia/min/just-good-cookies-ts?color=%23bbf7d0"> 
+        </a> 
+        <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/csouchet/just-good-cookies-ts?color=%23bbf7d0"> 
+        <a href="https://www.jsdelivr.com/package/npm/just-good-cookies-ts">
+          <img alt="jsDelivr hits (GitHub)" src="https://img.shields.io/jsdelivr/gh/hm/csouchet/just-good-cookies-ts?color=b8eecc"> 
+        </a> 
+        <a href="https://github.com/csouchet/just-good-cookies-ts/releases">
+          <img alt="GitHub release (latest by date including pre-releases)" src="https://img.shields.io/github/v/release/csouchet/just-good-cookies-ts?label=changelog&include_prereleases"> 
+        </a>
+        <a href="https://github.com/csouchet/just-good-cookies-ts/actions">
+          <img alt="Build" src="https://github.com/csouchet/just-good-cookies-ts/workflows/Build/badge.svg"> 
+        </a> 
+        <a href="https://sonarcloud.io/dashboard?id=csouchet_just-good-cookies-ts">
+          <img alt="Coverage" src="https://sonarcloud.io/api/project_badges/measure?project=csouchet_just-good-cookies-ts&metric=coverage"
+               title="The code coverage is underestimated. It doesn't count the code that is only tested through HTML page.">
+        </a>
+        <a href="https://gitpod.io/#https://github.com/csouchet/just-good-cookies-ts" target="_blank">
+          <img alt="Gitpod" src="https://img.shields.io/badge/Gitpod-ready--to--code-chartreuse?logo=gitpod"> 
+        </a> 
+        <br>
+        <a href="CONTRIBUTING.md">
+          <img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-welcome-ff69b4.svg?style=flat-square"> 
+        </a> 
+        <a href="CODE_OF_CONDUCT.md">
+          <img alt="Contributor Covenant" src="https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg"> 
+        </a> 
+        <a href="LICENSE">
+          <img alt="License" src="https://img.shields.io/github/license/csouchet/just-good-cookies-ts?color=blue"> 
+        </a>
+    </p>
+</div>  
+<br>
 
-![JGC Styles](https://raw.githubusercontent.com/francescomugnai/just-good-cookies/main/images/jgc.jpg "JGC")
 
 > **Please note**: JGC is in its **pre-release stage** It may be buggy and may not work as expected. Some features may be added, **others may be completely removed or delayed**.
 > 🚧 It is currently being actively tested. Use at your own risk! 🚧
 
 <br/>
-
-![npm](https://img.shields.io/badge/Just%20Good%20Cookies-0.9.8-%23abe1be) ![jsDelivr hits (GitHub)](https://img.shields.io/jsdelivr/gh/hm/francescomugnai/just-good-cookies?color=b8eecc) ![GitHub top language](https://img.shields.io/github/languages/top/francescomugnai/just-good-cookies?color=%23bbf7d0) ![npm bundle size](https://img.shields.io/bundlephobia/min/just-good-cookies?color=%23bbf7d0) ![NPM](https://img.shields.io/npm/l/just-good-cookies?color=%23bbf7d0) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/francescomugnai/just-good-cookies/CodeQL?color=%23bbf7d0) ![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/francescomugnai/just-good-cookies?color=%23bbf7d0)
 
 Just Good Cookies (JGC) is a simple (but delicious) cookie consent solution made in vanilla JavaScript.
 It is designed to be fast, painless and easy to use.
@@ -69,16 +105,16 @@ Thank you!
 
 ### WIKI - HOWTOs
 
-- 🇮🇹🇺🇸🇪🇸 [How to translate the custom strings and make JGC fully multilingual](https://github.com/francescomugnai/just-good-cookies/wiki/How-to-translate-the-custom-strings-and-make-JGC-fully-multilingual)
-- 🇮🇹🇺🇸🇪🇸 [How to submit a new translation](<https://github.com/francescomugnai/just-good-cookies/wiki/How-to-submit-a-new-translation-(or-to-update-an-old-one)>)
-- 🧑🏻‍💻 [How to customize the panel header and footer](https://github.com/francescomugnai/just-good-cookies/wiki/How-to-customize-the-panel-header-and-footer)
-- 🎛 [How to fire the preference panel from a button](https://github.com/francescomugnai/just-good-cookies/wiki/How-to-fire-the-preference-panel)
-- 👩🏼‍💻 [How to replace the banner description with a custom div](https://github.com/francescomugnai/just-good-cookies/wiki/How-to-replace-the-banner-description-with-a-custom-div)
-- 🖖🏻+🤖 [How to mix and merge the automatic mode and the manual one](https://github.com/francescomugnai/just-good-cookies/wiki/How-to-mix-and-merge-the-automatic-mode-and-the-manual-one)
-- 🖋 [How to use custom fonts](https://github.com/francescomugnai/just-good-cookies/wiki/How-to-use-custom-fonts)
-- 🖥 [How to avoid flickering](https://github.com/francescomugnai/just-good-cookies/wiki/How-to-avoid-flickering)
-- 🧙🏻 [How to install JGC on a website (eg. WordPress) that uses a different CSS framework](<https://github.com/francescomugnai/just-good-cookies/wiki/How-to-install-JGC-on-a-website-(eg.-WordPress)-that-uses-a-different-CSS-framework>)
-- ❗️ [Browser support and how to deal with out-of-date browsers](https://github.com/francescomugnai/just-good-cookies/wiki/Browser-support-and-how-to-deal-with-out-of-date-browsers)
+- 🇮🇹🇺🇸🇪🇸 [How to translate the custom strings and make JGC fully multilingual](https://github.com/csouchet/just-good-cookies/wiki/How-to-translate-the-custom-strings-and-make-JGC-fully-multilingual)
+- 🇮🇹🇺🇸🇪🇸 [How to submit a new translation](<https://github.com/csouchet/just-good-cookies/wiki/How-to-submit-a-new-translation-(or-to-update-an-old-one)>)
+- 🧑🏻‍💻 [How to customize the panel header and footer](https://github.com/csouchet/just-good-cookies/wiki/How-to-customize-the-panel-header-and-footer)
+- 🎛 [How to fire the preference panel from a button](https://github.com/csouchet/just-good-cookies/wiki/How-to-fire-the-preference-panel)
+- 👩🏼‍💻 [How to replace the banner description with a custom div](https://github.com/csouchet/just-good-cookies/wiki/How-to-replace-the-banner-description-with-a-custom-div)
+- 🖖🏻+🤖 [How to mix and merge the automatic mode and the manual one](https://github.com/csouchet/just-good-cookies/wiki/How-to-mix-and-merge-the-automatic-mode-and-the-manual-one)
+- 🖋 [How to use custom fonts](https://github.com/csouchet/just-good-cookies/wiki/How-to-use-custom-fonts)
+- 🖥 [How to avoid flickering](https://github.com/csouchet/just-good-cookies/wiki/How-to-avoid-flickering)
+- 🧙🏻 [How to install JGC on a website (eg. WordPress) that uses a different CSS framework](<https://github.com/csouchet/just-good-cookies/wiki/How-to-install-JGC-on-a-website-(eg.-WordPress)-that-uses-a-different-CSS-framework>)
+- ❗️ [Browser support and how to deal with out-of-date browsers](https://github.com/csouchet/just-good-cookies/wiki/Browser-support-and-how-to-deal-with-out-of-date-browsers)
 
 <hr>
 
@@ -96,7 +132,7 @@ There are 2 ways to use JGC in your projects:
 1. Copy this script and paste it on your site (ideally into the head tag)
 
 ```js
-<script src="https://cdn.jsdelivr.net/gh/francescomugnai/just-good-cookies@0.9.8/dist/justgoodcookies.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/csouchet/just-good-cookies@0.9.8/dist/justgoodcookies.min.js"></script>
 ```
 
 2. Install Tailwind (if you haven't already, see [below](#tailwind))
@@ -573,7 +609,7 @@ Parameters:
 
 ## Styles
 
-![JGC Styles](https://raw.githubusercontent.com/francescomugnai/just-good-cookies/main/images/jgc-styles.jpg "JGC Styles")
+![JGC Styles](https://raw.githubusercontent.com/csouchet/just-good-cookies/main/images/jgc-styles.jpg "JGC Styles")
 
 Choose your favorite layout and customize it (and soon I will make more).
 `style1`, `style2`, `style3`, `style4`, `style5`, `style6`, `style7` are generic styles (only the layouts are different, not the functions).
@@ -765,7 +801,7 @@ autoCategories: {
 },
 ```
 
-[Read here how to translate these fields](https://github.com/francescomugnai/just-good-cookies/wiki/How-to-translate-the-custom-strings-and-make-JGC-fully-multilingual)
+[Read here how to translate these fields](https://github.com/csouchet/just-good-cookies/wiki/How-to-translate-the-custom-strings-and-make-JGC-fully-multilingual)
 
 > ⚠️ If the attribute and category key do not match, the script will not appear in the preferences panel ⚠️
 

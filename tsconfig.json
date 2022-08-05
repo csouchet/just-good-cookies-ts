@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "declaration": false,
+    "outDir": "./build/lib",
+    "module": "es6",
+    "target": "es6",
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
+    "alwaysStrict": true,
+    "strictFunctionTypes": true,
+    "noImplicitThis": true,
+    "skipLibCheck": false,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "sourceMap": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "typeRoots": [
+      "node_modules/@types", "src/types"
+    ],
+    "stripInternal": true,
+    "noImplicitOverride": true,
+    // Vitejs requirements https://vitejs.dev/guide/features.html#typescript-compiler-options
+    "isolatedModules": true, // https://esbuild.github.io/content-types/#isolated-modules
+    "useDefineForClassFields": true,
+  },
+  "include": [
+    "src/**/*",
+  ]
+}
